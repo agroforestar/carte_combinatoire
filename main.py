@@ -39,7 +39,6 @@ if __name__ == '__main__':
     g = Carte()
     g.addFace(4)
     print(g.getFace(g.root))
-    print(g.exteriorFace())
     g.addFace(4, g.exteriorFace()[0])
     g.addFace(4, g.exteriorFace()[0])
     g.addFace(4, g.exteriorFace()[0])
