@@ -8,6 +8,7 @@ from carte import *
 import igraph as ig
 import matplotlib.pyplot as plt
 from Map import *
+from Drawing import *
 
 def findLines(trees):
     testedTree = list()
@@ -37,49 +38,36 @@ def representMap(map:Carte):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # g = Carte()
-    # g.addFace(4)
-    # print(g.getFace(g.root))
-    # g.addFace(4, g.exteriorFace()[0])
-    # g.addFace(4, g.exteriorFace()[0])
-    # g.addFace(4, g.exteriorFace()[0])
-    # g.addFace(4, g.exteriorFace()[0])
-    # print(g.getAllFaces())
-    # print(g.exteriorFace())
-
     am = nMap()
-    d1 = am.createDartNMap(1, 0,0)
-    d2 = am.createDartNMap(2, 0,1)
-    d3 = am.createDartNMap(3,1,1)
-    dart_used = [d1,d2,d3]
-    am.createOnePolygon(dart_used)
-    # am.drawVertexIter(am.darts[0])
 
+
+    print("/// Triangle ////")
+    d1 = am.createDartNMap(1, 0, 0)
+    d2 = am.createDartNMap(2, 0, 1)
+    d3 = am.createDartNMap(3, 1, 1)
+    dart_used = [d1, d2, d3]
+    am.createOnePolygon(dart_used)
+    am.drawVertexIter(d1)
+    f1 = am.getFace(d1)
+    print(f1)
+
+    print("/// Rectangle  ////")
     d4 = am.createDartNMap(4, 2, 2)
     d5 = am.createDartNMap(5, 2, 3)
     d6 = am.createDartNMap(6, 3, 3)
-
-    bis = [d4,d5,d6]
+    d7 = am.createDartNMap(7, 3, 2)
+    bis = [d4, d5, d6, d7]
     am.createOnePolygon(bis)
-    am.drawVertexIter(d1)
-    print("/// 2 eme poly")
-    am.drawVertexIter(d5)
-    print("/// 1 eme poly")
-    am.drawVertexIter(d1)
-    print("/// 2 eme poly")
-    am.drawVertexIter(d6)
+    am.drawVertexIter(d4)
+    f2 = am.getFace(d4)
+    print(f2)
 
+    am.setBeta2(d1, d4)
+    print(am.getFace(d4.betas[2]))
 
+    coord = am.getCoordFace(f2)
+    pencil = Pencil()
+    pencil.drawFace(coord)
 
-  #  representMap(g)
-    #g.affectNodes()
-    # g.collapse(g.root)
-    # g.collapse(g.root)
-   # g.debug(lambda l: l + 100)
-
-    # plants = read("D:\Mes_Documents\code\openCVPyhton\data2.txt")
-#    plants = [(1100, 864), (113, 857), (612, 853), (1102, 630), (115, 623), (614, 619), "Crop", <Plant.Plant object at 0x000001C016DDB460>, (1108, 405), (121, 398), (620, 394), (1115, 166), (128, 159), (627, 155)]
-
- #   findLines([tree for tree in plants if type(tree) == Tree].copy())
 
 

@@ -17,7 +17,7 @@ class nMap:
         self.darts = []
         self.freeMarks = []
         self.null_dart  = Dart(N_DIM, NB_MARKS)
-        for i in range(0, N_DIM):
+        for i in range(0, N_DIM+1):
             self.null_dart.betas[i] = self.null_dart
         for i in range(0, NB_MARKS):
             self.freeMarks.append(i)
@@ -100,8 +100,8 @@ class nMap:
         self.markMap(self.null_dart, ma)
         while len(p)>0:
             cur = p.pop()
-            for i in range(0, N_DIM- 1):
-                for j in range(i+1, N_DIM ):
+            for i in range(1, N_DIM):
+                for j in range(i+1, N_DIM +1):
                     if not self.isMarkedMap(cur.betas[j].betas[i], ma):
                         self.markMap(cur.betas[j].betas[i], ma)
                         p.append(cur.betas[j].betas[i])
@@ -118,8 +118,6 @@ class nMap:
         self.freeMarkMap(ma)
 
         # ref: algorithme 30 (Damiand & Lienhardt 2014)
-        # à revoir et faire pap a pas dans le cas du 2D map
-
     def drawVertexIter(self, d: Dart):
             ma = self.reserveMarkMap()
             p = [d]
@@ -128,68 +126,17 @@ class nMap:
             while len(p) > 0:
                 cur = p.pop()
                 print(str(cur) + " suivant " + str(cur.betas[0]) + "propertes" + str(cur.properties))
-                for i in range(0, N_DIM - 1):
-                    for j in range(i + 1, N_DIM):
-                        if not self.isMarkedMap(cur.betas[j].betas[i], ma):
-                            self.markMap(cur.betas[j].betas[i], ma)
-                            p.append(cur.betas[j].betas[i])
-                        if not self.isMarkedMap(cur.betas[self.inv(i)].betas[j], ma):
-                            self.markMap(cur.betas[self.inv(i)].betas[j], ma)
-                            p.append(cur.betas[self.inv(i)].betas[j])
-
-
-            # self.unmarkMap(cur, ma)
-            p = [d]
-            self.unmarkMap(self.null_dart, ma)
-            while len(p) > 0:
-                cur = p.pop()
-                for i in range(0, N_DIM - 1):
-                    for j in range(i + 1, N_DIM):
-                        if self.isMarkedMap(cur.betas[j].betas[i], ma):
-                            self.unmarkMap(cur.betas[j].betas[i], ma)
-                            p.append(cur.betas[j].betas[i])
-                        if self.isMarkedMap(cur.betas[self.inv(i)].betas[j], ma):
-                            self.unmarkMap(cur.betas[self.inv(i)].betas[j], ma)
-                            p.append(cur.betas[self.inv(i)].betas[j])
-            self.freeMarkMap(ma)
-
-
-
-
-            # ma = self.reserveMarkMap()
-            # p = [d]
-            # self.markMap(d, ma)
-            # self.markMap(self.null_dart, ma)
-            # while len(p) > 0:
-            #     cur = p.pop()
-            #     print( str(cur) + " suivant "+str(cur.betas[0])+ "propertes" + str(cur.properties))
-            #     for i in range(0, N_DIM -1):
-            #             print(i)
-            #             if not self.isMarkedMap(cur.betas[i], ma):
-            #                 self.markMap(cur.betas[i], ma)
-            #                 p.append(cur.betas[i])
-            #             if not self.isMarkedMap(cur.betas[self.inv(i)], ma):
-            #                 self.markMap(cur.betas[self.inv(i)], ma)
-            #                 p.append(cur.betas[self.inv(i)])
-            #
-            #          #   print("dim: "+str(i)+ "mark :" +str(j)+" "+ str(cur.properties))
-            #     # self.unmarkMap(cur, ma)
-            # for i in range(0, N_DIM-1 ):
-            #         if self.isMarkedMap(cur.betas[i], ma):
-            #             self.unmarkMap(cur.betas[i], ma)
-            #         if self.isMarkedMap(cur.betas[self.inv(i)], ma):
-            #                 self.unmarkMap(cur.betas[self.inv(i)], ma)
-            #         # if self.isMarkedMap(cur, ma):
-
-
+                for i in range(1, N_DIM ):
+                        if not self.isMarkedMap(cur.betas[i], ma):
+                            self.markMap(cur.betas[i], ma)
+                            p.append(cur.betas[i])
+                        if not self.isMarkedMap(cur.betas[self.inv(i)], ma):
+                            self.markMap(cur.betas[self.inv(i)], ma)
+                            p.append(cur.betas[self.inv(i)])
+            for d in self.darts:
+                self.unmarkMap(d, ma)
 
             self.freeMarkMap(ma)
-
-
-    # def iterOnDart(self, i : int):
-    #     ma = self.reserveMarkMap()
-    #     for d in self.darts:
-
 
     # ref: algorithme 35(Daminad & Lienhardt 2014)
     # desc: create a dart in current map without connexion with other darts
@@ -199,9 +146,9 @@ class nMap:
     def createDartNMap(self):
         d = myDart(N_DIM, NB_MARKS)
         self.darts.append(d)
-        for i in range(0, N_DIM):
+        for i in range(0, N_DIM+1):
             d.betas[i] = self.null_dart
-        for i in range(0, NB_MARKS-1):
+        for i in range(0, NB_MARKS):
             d.marks[i] = False
         return d
 
@@ -209,9 +156,9 @@ class nMap:
     def createDartNMap(self, id:int, x:float, y:float):
         d = myDart(N_DIM, NB_MARKS, id, x, y)
         self.darts.append(d)
-        for i in range(0, N_DIM):
+        for i in range(0, N_DIM+1):
             d.betas[i] = self.null_dart
-        for i in range(0, NB_MARKS-1):
+        for i in range(0, NB_MARKS):
             d.marks[i] = False
         return d
 
@@ -250,11 +197,43 @@ class nMap:
             d2.betas[self.inv(0)] = d1
 
 
+    def setBeta2(self, current:Dart, inv : Dart):
+        current.betas[2] = inv
+        inv.betas[2] = current
+
     def createOnePolygon(self, listDart):
         lasrIndex = len(listDart)-1
-        print(listDart[lasrIndex])
         for i in range(0, lasrIndex):
-            print(str(listDart[i]) + "  " + str(listDart[i+1]))
             self.oneSewMyMap(listDart[i], listDart[i+1])
-
         self.oneSewMyMap(listDart[lasrIndex], listDart[0])
+
+
+    def getFace(self, d: Dart):
+            ma = self.reserveMarkMap()
+            p = [d]
+            self.markMap(d, ma)
+            self.markMap(self.null_dart, ma)
+            dartFace = []
+            while len(p) > 0:
+                cur = p.pop()
+                dartFace.append(cur)
+                for i in range(1, N_DIM):
+                    if not self.isMarkedMap(cur.betas[i], ma):
+                        self.markMap(cur.betas[i], ma)
+                        p.append(cur.betas[i])
+                    if not self.isMarkedMap(cur.betas[self.inv(i)], ma):
+                        self.markMap(cur.betas[self.inv(i)], ma)
+                        p.append(cur.betas[self.inv(i)])
+            for d in self.darts:
+                self.unmarkMap(d, ma)
+            self.freeMarkMap(ma)
+            return dartFace
+
+
+    def getCoordFace(self, face:list):
+        coord = []
+        for dart in face:
+            x = dart.properties["x_pos"]
+            y = dart.properties["y_pos"]
+            coord.append([x, y])
+        return coord

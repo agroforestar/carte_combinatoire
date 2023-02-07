@@ -4,12 +4,14 @@
 #author: L.L.
 
 class Dart:
-
+##beta[0] : next
+##beta[1] : pred
+##beta[2] : involution
 
     def __init__(self, numberDim, nbMark):
         self.betas = []
         self.marks = []
-        for i in range(0, numberDim):
+        for i in range(0, numberDim+1):
             self.betas.append(None)
         for i in range(0, nbMark):
             self.marks.append(None)
@@ -25,16 +27,12 @@ class myDart(Dart):
     def __init__(self, numberDim, nbMark, id : int, x:float=0, y:float=0):
         super(myDart, self).__init__(numberDim, nbMark)
         self.properties = dict()
-        # for i in range(0, numberDim):
-        #     self.betas.append(None)
-        # for i in range(0, nbMark):
-        #     self.marks.append(None)
         self.num = id
         self.properties["x_pos"] = x
         self.properties["y_pos"] = y
         self.properties["type"] = "Tree" #mettre jargon pour désigner les différents éléments
 
     def __repr__(self):
-            return str( "id "+ str(self.num)+" / ")
+            return str( "id "+ str(self.num))
 
 
