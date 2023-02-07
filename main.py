@@ -7,6 +7,7 @@ from Crop import *
 from carte import *
 import igraph as ig
 import matplotlib.pyplot as plt
+from Map import *
 
 def findLines(trees):
     testedTree = list()
@@ -36,18 +37,41 @@ def representMap(map:Carte):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    g = Carte()
-    g.addFace(4)
-    print(g.getFace(g.root))
-    g.addFace(4, g.exteriorFace()[0])
-    g.addFace(4, g.exteriorFace()[0])
-    g.addFace(4, g.exteriorFace()[0])
-    g.addFace(4, g.exteriorFace()[0])
-    print(g.getAllFaces())
-    print(g.exteriorFace())
+    # g = Carte()
+    # g.addFace(4)
+    # print(g.getFace(g.root))
+    # g.addFace(4, g.exteriorFace()[0])
+    # g.addFace(4, g.exteriorFace()[0])
+    # g.addFace(4, g.exteriorFace()[0])
+    # g.addFace(4, g.exteriorFace()[0])
+    # print(g.getAllFaces())
+    # print(g.exteriorFace())
+
+    am = nMap()
+    d1 = am.createDartNMap(1, 0,0)
+    d2 = am.createDartNMap(2, 0,1)
+    d3 = am.createDartNMap(3,1,1)
+    dart_used = [d1,d2,d3]
+    am.createOnePolygon(dart_used)
+    # am.drawVertexIter(am.darts[0])
+
+    d4 = am.createDartNMap(4, 2, 2)
+    d5 = am.createDartNMap(5, 2, 3)
+    d6 = am.createDartNMap(6, 3, 3)
+
+    bis = [d4,d5,d6]
+    am.createOnePolygon(bis)
+    am.drawVertexIter(d1)
+    print("/// 2 eme poly")
+    am.drawVertexIter(d5)
+    print("/// 1 eme poly")
+    am.drawVertexIter(d1)
+    print("/// 2 eme poly")
+    am.drawVertexIter(d6)
 
 
-    representMap(g)
+
+  #  representMap(g)
     #g.affectNodes()
     # g.collapse(g.root)
     # g.collapse(g.root)
