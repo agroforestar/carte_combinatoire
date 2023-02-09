@@ -212,7 +212,7 @@ class nMap:
     #          inv le dart sur lequel beta2(current) doit renvoyer
     def setBeta2(self, current:Dart, inv : Dart):
         if len(self.getFace(current)) > 0:
-            if  len(self.getFace(inv)) > 0:
+            if len(self.getFace(inv)) > 0:
                 current.betas[2] = inv
                 inv.betas[2] = current
             else:
@@ -271,14 +271,52 @@ class nMap:
             coord.append([x, y])
         return coord
 
+    def reverseMap(self, d:Dart):
+        face = self.getFace(d)
+        for dart in face:
+            temp = dart.betas[0]
+            dart.betas[0] = dart.betas[1]
+            dart.betas[1] = temp
+
+    def getConnectedDart(self, cm:'nMap'):
+        output = []
+        fin = False
+        i = 0
+
+        while not fin:
+            d = self.darts[i]
+            for d_prime in cm.darts:
+                d_next = d.betas[0]
+                d_pred = d.betas[1]
+                d_prime_next = d_prime.betas[0]
+                d_prime_pred = d_prime.betas[1]
+
+                if d.getCoordinates() == d_prime_next.getCoordinates() and d_next.getCoordinates() == d_prime.getCoordinates(): # cas où l'orientation des 2 cartes sont inversé
+                    print("sens inverse inverse trouvé")
+                    output.append(d)
+                    output.append(d_prime)
+                    fin = True
+                elif d.getCoordinates() == d_prime.getCoordinates() and d_next.getCoordinates() == d_prime_next.getCoordinates():
+                    print("sens id inverse trouvé")
+                    self.reverseMap(d_prime)
+
+                    output.append(d)
+                    output.append(d_prime.betas[1])
+                    fin = True
+            i = i+1
+        return output
+
+
     #ref: Algorithme 40 (Damiand and Liendhard 2014)
     def mergeNMaps(self, cm: 'nMap'):
+        commun = self.getConnectedDart(cm)
+        self.setBeta2(commun[0], commun[1])
         merge = nMap()
         merge.freeMarks = list(set(self.freeMarks) & set(cm.freeMarks))
         assoc = dict()
         assoc[self.null_dart] = merge.null_dart
         assoc[cm.null_dart] = merge.null_dart
-        unionDart = self.darts  + cm.darts
+        unionDart = self.darts + cm.darts
         for d in unionDart:
             assoc[d] = merge.createDartNMap(d.properties)
         for d in unionDart:
