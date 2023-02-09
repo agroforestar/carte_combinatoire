@@ -42,10 +42,10 @@ if __name__ == '__main__':
 
 
     print("/// Line 1 ////")
-    d1 = am.createDartNMap(1, 0, 0)
-    d2 = am.createDartNMap(2, 0, 3)
-    d3 = am.createDartNMap(3, 2, 3)
-    d4 = am.createDartNMap(4, 2, 0)
+    d1 = am.createDartNMap(1, 0.0, 0.0)
+    d2 = am.createDartNMap(2, 0.0, 3.0)
+    d3 = am.createDartNMap(3, 2.0, 3.0)
+    d4 = am.createDartNMap(4, 2.0, 0.0)
     dart_used = [d1, d2, d3, d4]
     am.createOnePolygon(dart_used)
     am.drawVertexIter(d1)
@@ -53,41 +53,63 @@ if __name__ == '__main__':
     print(f1)
 
     print("/// Rectangle de culture  ////")
-    d5 = am.createDartNMap(8, 2, 3)
-    d6 = am.createDartNMap(5, 0, 3)
-    d7 = am.createDartNMap(6, 0, 6)
-    d8 = am.createDartNMap(7, 2, 6)
+    crop = nMap()
+    d5 = crop.createDartNMap(8, 2.0, 3.0)
+    d6 = crop.createDartNMap(5, 0.0, 3.0)
+    d7 = crop.createDartNMap(6, 0.0, 6.0)
+    d8 = crop.createDartNMap(7, 2.0, 6.0)
     bis = [d5, d6, d7, d8]
-    am.createOnePolygon(bis)
-    am.drawVertexIter(d5)
-    f2 = am.getFace(d5)
+    crop.createOnePolygon(bis)
+    crop.drawVertexIter(d5)
+    f2 = crop.getFace(d5)
     print(f2)
+    map = am.mergeNMaps(crop)
+    print(map.darts)
 
     print("/// Line 2  ////")
-    d12 = am.createDartNMap(12, 2, 9)
-    d11 = am.createDartNMap(11, 0, 9)
-    d10 = am.createDartNMap(10, 0, 6)
-    d9 = am.createDartNMap(9, 2, 6)
+    d12 = am.createDartNMap(12, 2.0, 9.0)
+    d11 = am.createDartNMap(11, 0.0, 9.0)
+    d10 = am.createDartNMap(10, 0.0, 6.0)
+    d9 = am.createDartNMap(9, 2.0, 6.0)
     ter = [d9, d10, d11, d12]
     am.createOnePolygon(ter)
     am.drawVertexIter(d9)
     f3 = am.getFace(d9)
     print(f3)
 
-    am.setBeta2(d4, d5)
+    print("/// Outside  ////")
+    d13 = am.createDartNMap(13, 0.0, 0.0)
+    d14 = am.createDartNMap(14, 0.0, 3.0)
+    d15 = am.createDartNMap(15, 0.0, 6.0)
+    d16 = am.createDartNMap(16, 0.0, 9.0)
+    d17 = am.createDartNMap(17, 2.0, 9.0)
+    d18 = am.createDartNMap(18, 2.0, 6.0)
+    d19 = am.createDartNMap(19, 2.0, 3.0)
+    d20 = am.createDartNMap(20, 2.0, 0.0)
+    d21 = am.createDartNMap(21, 2.0, 3.0)
+    d22 = am.createDartNMap(21, 2.0, 6.0)
+    outside = [d13, d14, d15, d16, d17, d18, d19, d20 ]
+    am.createOnePolygon(outside)
+    f4 = am.getFace(d13)
+    print(f4)
+
+    am.setBeta2(d2, d6)
     am.setBeta2(d8, d9)
     print(am.getFace(d4.betas[2]))
 
     coordF1 = am.getCoordFace(f1)
     coordF2 = am.getCoordFace(f2)
     coordF3 = am.getCoordFace(f3)
+    coordF4 = am.getCoordFace(f4)
+
+
 
     pencil = Pencil()
     # pencil.drawFace(coordF1)
     # pencil.drawFace(coordF2)
     # pencil.drawFace(coordF3)
 
-    pencil.drawFaces([coordF1, coordF2, coordF3])
+    pencil.drawFaces([coordF1, coordF2, coordF3, coordF4])
 
 
 

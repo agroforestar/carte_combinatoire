@@ -2,7 +2,7 @@
 #ref: Combinatorial Maps: Efficient Data Structures for Computer Graphics and Image Processing, p158, data structure Dart (Listing 5.1)
 #date: 03/02/2023
 #author: L.L.
-
+from multipledispatch import dispatch  # importing the module
 from Dart import *
 NB_MARKS = 8 #taille allouee du tableau au dart
 N_DIM = 2  #nombre de dimension de la carte
@@ -143,6 +143,7 @@ class nMap:
     # Input:
     #       self: current map
     # Output : new dart
+    @dispatch()
     def createDartNMap(self):
         d = myDart(N_DIM, NB_MARKS)
         self.darts.append(d)
@@ -152,11 +153,21 @@ class nMap:
             d.marks[i] = False
         return d
 
-
+    @dispatch(int, float, float)
     def createDartNMap(self, id:int, x:float, y:float):
         d = myDart(N_DIM, NB_MARKS, id, x, y)
         self.darts.append(d)
         for i in range(0, N_DIM+1):
+            d.betas[i] = self.null_dart
+        for i in range(0, NB_MARKS):
+            d.marks[i] = False
+        return d
+
+    @dispatch(dict)
+    def createDartNMap(self, properties:dict):
+        d = myDart(N_DIM, NB_MARKS, properties)
+        self.darts.append(d)
+        for i in range(0, N_DIM + 1):
             d.betas[i] = self.null_dart
         for i in range(0, NB_MARKS):
             d.marks[i] = False
@@ -190,24 +201,45 @@ class nMap:
         else:
             return False
 
-
+    # ref: algorithme 44 (Daminad & Lienhardt 2014)
     def oneSewMyMap(self, d1:Dart, d2:Dart):
         # if self.isFreeNMap(d1, 0)  :
             d1.betas[0] = d2
             d2.betas[self.inv(0)] = d1
 
-
+    # Fixe le beta2 (le dart dans le sens inverse)
+    # input : current le date traité
+    #          inv le dart sur lequel beta2(current) doit renvoyer
     def setBeta2(self, current:Dart, inv : Dart):
-        current.betas[2] = inv
-        inv.betas[2] = current
+        if len(self.getFace(current)) > 0:
+            if  len(self.getFace(inv)) > 0:
+                current.betas[2] = inv
+                inv.betas[2] = current
+            else:
+                print("The second dart is not in face")
+        else:
+            print("The current dart is not in face")
 
+
+    def isBeta2(self, curent:Dart, d:Dart):
+        coord_current = curent.getCoordinates()
+        coord_next = curent.betas[0].getCoordinates()
+        coord_d = d.getCoordinates()
+        coord_pred = d.betas[1].getCoordinates()
+        if coord_d == coord_next and coord_current == coord_pred:
+            return True
+        else:
+            return False
+
+    # Créer un polygone
+    # input : list contenant tous les darts du polybone
     def createOnePolygon(self, listDart):
         lasrIndex = len(listDart)-1
         for i in range(0, lasrIndex):
             self.oneSewMyMap(listDart[i], listDart[i+1])
         self.oneSewMyMap(listDart[lasrIndex], listDart[0])
 
-
+    # Renvoit tous les darts de la face dont le dart d appartient
     def getFace(self, d: Dart):
             ma = self.reserveMarkMap()
             p = [d]
@@ -230,6 +262,7 @@ class nMap:
             return dartFace
 
 
+    # Renvoit la liste des coordonées rattachées aux darts composant la face
     def getCoordFace(self, face:list):
         coord = []
         for dart in face:
@@ -237,3 +270,39 @@ class nMap:
             y = dart.properties["y_pos"]
             coord.append([x, y])
         return coord
+
+    #ref: Algorithme 40 (Damiand and Liendhard 2014)
+    def mergeNMaps(self, cm: 'nMap'):
+        merge = nMap()
+        merge.freeMarks = list(set(self.freeMarks) & set(cm.freeMarks))
+        assoc = dict()
+        assoc[self.null_dart] = merge.null_dart
+        assoc[cm.null_dart] = merge.null_dart
+        unionDart = self.darts  + cm.darts
+        for d in unionDart:
+            assoc[d] = merge.createDartNMap(d.properties)
+        for d in unionDart:
+            d_temp = assoc[d]
+            for i in range(0, N_DIM+1):
+                d_temp.betas[i] = assoc[d.betas[i]]
+            for i in range(0, NB_MARKS):
+                d_temp.marks[i] = d.marks[i]
+        return merge
+
+# Hypothèse imposé : carte avec frontière  / Each Dart d, d.beta[2] != null
+    #besoin de fonction de de correction lorsque l'hypothèse n'est pas remplie
+    def orbit(self, d:Dart):
+        current = d.betas[2]
+        dartorbit = [current]
+        while current != d:
+            current = current.beta[0]
+            dartorbit.append(current)
+            current = current.beta[2]
+            dartorbit.append(current)
+        return dartorbit
+
+    #hypthèse d : dart entrant dans l'orbit et les betas 2 sont fixé
+    def crossOrbit(self, d:Dart):
+        next = d.betas[0].betas[2].betas[0]
+        return next
+

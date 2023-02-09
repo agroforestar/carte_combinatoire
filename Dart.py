@@ -27,12 +27,19 @@ class myDart(Dart):
     def __init__(self, numberDim, nbMark, id : int, x:float=0, y:float=0):
         super(myDart, self).__init__(numberDim, nbMark)
         self.properties = dict()
-        self.num = id
+        self.properties["id"] = id
         self.properties["x_pos"] = x
         self.properties["y_pos"] = y
         self.properties["type"] = "Tree" #mettre jargon pour désigner les différents éléments
 
-    def __repr__(self):
-            return str( "id "+ str(self.num))
 
+    def __int__(self,numberDim, nbMark, properties:dict):
+        super(myDart, self).__init__(numberDim, nbMark)
+        self.properties = properties
+    def __repr__(self):
+            return str( "id "+ str(self.properties["id"]))
+
+
+    def getCoordinates(self):
+        return [self.properties["x_pos"], self.properties["y_pos"]]
 
