@@ -241,25 +241,25 @@ class nMap:
 
     # Renvoit tous les darts de la face dont le dart d appartient
     def getFace(self, d: Dart):
-            ma = self.reserveMarkMap()
-            p = [d]
-            self.markMap(d, ma)
-            self.markMap(self.null_dart, ma)
-            dartFace = []
-            while len(p) > 0:
-                cur = p.pop()
-                dartFace.append(cur)
-                for i in range(1, N_DIM):
-                    if not self.isMarkedMap(cur.betas[i], ma):
-                        self.markMap(cur.betas[i], ma)
-                        p.append(cur.betas[i])
-                    if not self.isMarkedMap(cur.betas[self.inv(i)], ma):
-                        self.markMap(cur.betas[self.inv(i)], ma)
-                        p.append(cur.betas[self.inv(i)])
-            for d in self.darts:
-                self.unmarkMap(d, ma)
-            self.freeMarkMap(ma)
-            return dartFace
+        ma = self.reserveMarkMap()
+        p = [d]
+        self.markMap(d, ma)
+        self.markMap(self.null_dart, ma)
+        dartFace = []
+        while len(p) > 0:
+            cur = p.pop()
+            dartFace.append(cur)
+            for i in range(1, N_DIM):
+                if not self.isMarkedMap(cur.betas[i], ma):
+                    self.markMap(cur.betas[i], ma)
+                    p.append(cur.betas[i])
+                if not self.isMarkedMap(cur.betas[self.inv(i)], ma):
+                    self.markMap(cur.betas[self.inv(i)], ma)
+                    p.append(cur.betas[self.inv(i)])
+        for d in dartFace:
+            self.unmarkMap(d, ma)
+        self.freeMarkMap(ma)
+        return dartFace
 
 
     # Renvoit la liste des coordonées rattachées aux darts composant la face
@@ -299,10 +299,10 @@ class nMap:
                 elif d.getCoordinates() == d_prime.getCoordinates() and d_next.getCoordinates() == d_prime_next.getCoordinates():
                     print("sens id inverse trouvé")
                     self.reverseMap(d_prime)
-
                     output.append(d)
                     output.append(d_prime.betas[1])
                     fin = True
+
             i = i+1
         return output
 
@@ -310,6 +310,7 @@ class nMap:
     #ref: Algorithme 40 (Damiand and Liendhard 2014)
     def mergeNMaps(self, cm: 'nMap'):
         commun = self.getConnectedDart(cm)
+
         self.setBeta2(commun[0], commun[1])
         merge = nMap()
         merge.freeMarks = list(set(self.freeMarks) & set(cm.freeMarks))

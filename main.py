@@ -62,11 +62,8 @@ if __name__ == '__main__':
     crop.createOnePolygon(bis)
     crop.drawVertexIter(d5)
     f2 = crop.getFace(d5)
-    print(crop.darts)
+
     map = am.mergeNMaps(crop)
-    print(map.darts)
-    for d in map.darts:
-        print(d.betas[2])
 
     print(map.getFace(d1))
     print(map.getFace(d7))

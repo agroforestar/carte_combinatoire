@@ -14,7 +14,7 @@ class Dart:
         for i in range(0, numberDim+1):
             self.betas.append(None)
         for i in range(0, nbMark):
-            self.marks.append(None)
+            self.marks.append(False)
 
     #
     # def __repr__(self):
