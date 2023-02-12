@@ -9,13 +9,12 @@ N_DIM = 2  #nombre de dimension de la carte
 
 #ref: Listing 5.2
 class nMap:
-
-
     # ref: algorithme 22 (Daminad & Lienhardt 2014)
     # desc: constructor + initialisation
     def __init__(self):
         self.darts = []
         self.freeMarks = []
+        self.faces = []
         self.null_dart  = Dart(N_DIM, NB_MARKS)
         for i in range(0, N_DIM+1):
             self.null_dart.betas[i] = self.null_dart
@@ -155,7 +154,7 @@ class nMap:
 
     @dispatch(int, float, float)
     def createDartNMap(self, id:int, x:float, y:float):
-        d = myDart(N_DIM, NB_MARKS, id, x, y)
+        d = myDart.withValue(N_DIM, NB_MARKS, id, x, y)
         self.darts.append(d)
         for i in range(0, N_DIM+1):
             d.betas[i] = self.null_dart
@@ -165,13 +164,25 @@ class nMap:
 
     @dispatch(dict)
     def createDartNMap(self, properties:dict):
-        d = myDart(N_DIM, NB_MARKS, properties)
+        d = myDart.withProperties(N_DIM, NB_MARKS, properties)
         self.darts.append(d)
         for i in range(0, N_DIM + 1):
             d.betas[i] = self.null_dart
         for i in range(0, NB_MARKS):
             d.marks[i] = False
         return d
+
+
+    def createFace(self, nbSegment :int, properties:list, type: str = "Crop"):
+        listDarts = []
+        for i in range(0, nbSegment):
+            listDarts.append(self.createDartNMap(properties[i]))
+        face = Face()
+        face.darts = listDarts
+        self.faces.append(face)
+        face.createOnePolygon(listDarts)
+        return face
+
 
     # ref: algorithme 36 (Daminad & Lienhardt 2014)
     def removeIsolatedDartNMap(self, d:Dart):
@@ -263,9 +274,9 @@ class nMap:
 
 
     # Renvoit la liste des coordonées rattachées aux darts composant la face
-    def getCoordFace(self, face:list):
+    def getCoordFace(self):
         coord = []
-        for dart in face:
+        for dart in self.darts:
             x = dart.properties["x_pos"]
             y = dart.properties["y_pos"]
             coord.append([x, y])
@@ -282,8 +293,9 @@ class nMap:
         output = []
         fin = False
         i = 0
-
+        print(self.darts)
         while not fin:
+            print(i)
             d = self.darts[i]
             for d_prime in cm.darts:
                 d_next = d.betas[0]
@@ -345,3 +357,22 @@ class nMap:
         next = d.betas[0].betas[2].betas[0]
         return next
 
+class Face(nMap):
+
+    def __init__(self):
+        super(Face, self).__init__()
+        self.gap = []
+
+    @classmethod
+    def withDarts(cls, listDarts:list):
+        new = cls()
+        new.darts = listDarts
+
+    def createGap(self, nbSegment: int, properties:list, objectType:str):
+        listDarts = []
+        newGap = Face()
+        for i in range(0, nbSegment):
+            listDarts.append(newGap.createDartNMap(properties[i]))
+        self.gap.append(newGap)
+        self.createOnePolygon(listDarts)
+        return listDarts

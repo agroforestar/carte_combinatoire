@@ -3,6 +3,7 @@
 #date: 03/02/2023
 #author: L.L.
 
+from multipledispatch import dispatch
 class Dart:
 ##beta[0] : next
 ##beta[1] : pred
@@ -24,18 +25,26 @@ class Dart:
 class myDart(Dart):
 
 
-    def __init__(self, numberDim, nbMark, id : int, x:float=0, y:float=0):
+    def __init__(self, numberDim, nbMark):
         super(myDart, self).__init__(numberDim, nbMark)
-        self.properties = dict()
-        self.properties["id"] = id
-        self.properties["x_pos"] = x
-        self.properties["y_pos"] = y
-        self.properties["type"] = "Tree" #mettre jargon pour désigner les différents éléments
+
+    @classmethod
+    def withValue(self, numberDim, nbMark, id : int, x:float=0, y:float=0):
+        new = self(numberDim, nbMark)
+        new.properties = dict()
+        new.properties["id"] = id
+        new.properties["x_pos"] = x
+        new.properties["y_pos"] = y
+        new.properties["type"] = "Tree" #mettre jargon pour désigner les différents éléments
+        return new
+
+    @classmethod
+    def withProperties(self, numberDim, nbMark, properties:dict):
+        new = self(numberDim, nbMark)
+        new.properties = properties
+        return new
 
 
-    def __int__(self,numberDim, nbMark, properties:dict):
-        super(myDart, self).__init__(numberDim, nbMark)
-        self.properties = properties
     def __repr__(self):
             return str( "id "+ str(self.properties["id"]))
 
