@@ -322,9 +322,10 @@ class nMap:
     #ref: Algorithme 40 (Damiand and Liendhard 2014)
     def mergeNMaps(self, cm: 'nMap'):
         commun = self.getConnectedDart(cm)
-
         self.setBeta2(commun[0], commun[1])
         merge = nMap()
+        merge.faces = self.faces + cm.faces
+        print(merge.faces)
         merge.freeMarks = list(set(self.freeMarks) & set(cm.freeMarks))
         assoc = dict()
         assoc[self.null_dart] = merge.null_dart

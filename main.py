@@ -51,35 +51,26 @@ if __name__ == '__main__':
     am.drawVertexIter(line1.darts[0])
     f1 = am.getFace(line1.darts[0])
 
-    tree = line1.createGap(4, [{"id":9, "x_pos":1.0, "y_pos":1.0}, {"id":10, "x_pos":1.0, "y_pos":2.0}, {"id":11, "x_pos":1.5, "y_pos":2.0}, {"id":12, "x_pos":1.5, "y_pos":1.0}], "Tree")
+    line1.createGap(4, [{"id":9, "x_pos":1.5, "y_pos":0.5}, {"id":10, "x_pos":1.5, "y_pos":1.0}, {"id":11, "x_pos":2.0, "y_pos":1.0}, {"id":12, "x_pos":2.0, "y_pos":0.5}], "Tree")
+    line1.createGap(4, [{"id":17, "x_pos":0.5, "y_pos":0.5}, {"id":18, "x_pos":0.5, "y_pos":1.0}, {"id":19, "x_pos":1.0, "y_pos":1.0}, {"id":20, "x_pos":1.0, "y_pos":0.5}], "Tree")
 
     print("/// Rectangle de culture  ////")
     crop = nMap()
-    # d5 = crop.createDartNMap(5, 2.0, 3.0)
-    # d6 = crop.createDartNMap(6, 0.0, 3.0)
-    # d7 = crop.createDartNMap(7, 0.0, 6.0)
-    # d8 = crop.createDartNMap(8, 2.0, 6.0)
     cropFace = crop.createFace(4, [{"id": 5, "x_pos":2.0, "y_pos":3.0}, {"id":6, "x_pos":0.0, "y_pos":3.0}, {"id":7, "x_pos":0.0, "y_pos":6.0}, {"id":8, "x_pos":2.0, "y_pos":6.0}])
-
-    #bis = [d5, d6, d7, d8]
     crop.drawVertexIter(cropFace.darts[0])
     f2 = crop.getFace(cropFace.darts[0])
 
     map = am.mergeNMaps(crop)
 
-    print(map.getFace(line1.darts[0]))
-    print(map.getFace(cropFace.darts[0]))
+    print("/// Line 2  ////")
+    line2 = nMap()
+    line2Face = line2.createFace(4, [{"id": 13, "x_pos": 2.0, "y_pos": 6.0}, {"id": 14, "x_pos": 0.0, "y_pos": 6.0},
+                                   {"id": 15, "x_pos": 0.0, "y_pos": 9.0}, {"id": 16, "x_pos": 2.0, "y_pos": 9.0}])
+    line2.drawVertexIter(line2Face.darts[0])
+    f3 = line2.getFace(line2Face.darts[0])
+    print(f3)
 
-    # print("/// Line 2  ////")
-    # d12 = am.createDartNMap(12, 2.0, 9.0)
-    # d11 = am.createDartNMap(11, 0.0, 9.0)
-    # d10 = am.createDartNMap(10, 0.0, 6.0)
-    # d9 = am.createDartNMap(9, 2.0, 6.0)
-    # ter = [d9, d10, d11, d12]
-    # am.createOnePolygon(ter)
-    # am.drawVertexIter(d9)
-    # f3 = am.getFace(d9)
-    # print(f3)
+    map = map.mergeNMaps(line2)
     #
     # print("/// Outside  ////")
     # d13 = am.createDartNMap(13, 0.0, 0.0)
@@ -110,7 +101,8 @@ if __name__ == '__main__':
     #
     #
     pencil = Pencil()
-    pencil.drawFace(line1)
+    #pencil.drawFace(line1)
+    pencil.drawMap(map)
     # # pencil.drawFace(coordF2)
     # # pencil.drawFace(coordF3)
     #
