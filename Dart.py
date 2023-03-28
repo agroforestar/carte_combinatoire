@@ -2,7 +2,7 @@
 #ref: Combinatorial Maps: Efficient Data Structures for Computer Graphics and Image Processing, p158, data structure Dart (Listing 5.1)
 #date: 03/02/2023
 #author: L.L.
-
+import uuid
 from multipledispatch import dispatch
 class Dart:
 ##beta[0] : next
@@ -29,7 +29,7 @@ class myDart(Dart):
         super(myDart, self).__init__(numberDim, nbMark)
 
     @classmethod
-    def withValue(self, numberDim, nbMark, id : int, x:float=0, y:float=0):
+    def withValue(self, numberDim, nbMark, id : uuid.UUID, x:float=0, y:float=0):
         new = self(numberDim, nbMark)
         new.properties = dict()
         new.properties["id"] = id

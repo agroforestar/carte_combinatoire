@@ -4,6 +4,7 @@
 #author: L.L.
 from multipledispatch import dispatch  # importing the module
 from Dart import *
+import uuid
 NB_MARKS = 8 #taille allouee du tableau au dart
 N_DIM = 2  #nombre de dimension de la carte
 
@@ -11,7 +12,8 @@ N_DIM = 2  #nombre de dimension de la carte
 class nMap:
     # ref: algorithme 22 (Daminad & Lienhardt 2014)
     # desc: constructor + initialisation
-    def __init__(self):
+    def __init__(self, id= uuid.uuid4()):
+        self.id = id
         self.darts = []
         self.freeMarks = []
         self.faces = []

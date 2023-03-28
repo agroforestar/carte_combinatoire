@@ -9,6 +9,7 @@ import igraph as ig
 import matplotlib.pyplot as plt
 from Map import *
 from Drawing import *
+import uuid
 
 def findLines(trees):
     testedTree = list()
@@ -46,12 +47,12 @@ if __name__ == '__main__':
     # d2 = am.createDartNMap(2, 0.0, 3.0)
     # d3 = am.createDartNMap(3, 2.0, 3.0)
     # d4 = am.createDartNMap(4, 2.0, 0.0)
-    line1 = am.createFace(4, [{"id":1, "x_pos":0.0, "y_pos":0.0}, {"id":2, "x_pos":0.0, "y_pos":3.0}, {"id":3, "x_pos":2.0, "y_pos":3.0}, {"id":4, "x_pos":2.0, "y_pos":0.0}], "Line 1")
+    line1 = am.createFace(4, [{"id":uuid.uuid4(), "x_pos":0.0, "y_pos":0.0}, {"id":uuid.uuid4(), "x_pos":0.0, "y_pos":3.0}, {"id":uuid.uuid4(), "x_pos":2.0, "y_pos":3.0}, {"id":uuid.uuid4(), "x_pos":2.0, "y_pos":0.0}], "Line 1")
 
     am.drawVertexIter(line1.darts[0])
     f1 = am.getFace(line1.darts[0])
 
-    line1.createGap(4, [{"id":9, "x_pos":1.5, "y_pos":0.5}, {"id":10, "x_pos":1.5, "y_pos":1.0}, {"id":11, "x_pos":2.0, "y_pos":1.0}, {"id":12, "x_pos":2.0, "y_pos":0.5}], "Tree")
+    line1.createGap(4, [{"id":uuid.uuid4(), "x_pos":1.5, "y_pos":0.5}, {"id":10, "x_pos":1.5, "y_pos":1.0}, {"id":11, "x_pos":2.0, "y_pos":1.0}, {"id":12, "x_pos":2.0, "y_pos":0.5}], "Tree")
     line1.createGap(4, [{"id":17, "x_pos":0.5, "y_pos":0.5}, {"id":18, "x_pos":0.5, "y_pos":1.0}, {"id":19, "x_pos":1.0, "y_pos":1.0}, {"id":20, "x_pos":1.0, "y_pos":0.5}], "Tree")
 
     print("/// Rectangle de culture  ////")
