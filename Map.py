@@ -2,6 +2,8 @@
 #ref: Combinatorial Maps: Efficient Data Structures for Computer Graphics and Image Processing, p158, data structure Dart (Listing 5.1)
 #date: 03/02/2023
 #author: L.L.
+#TODO : fonction 1 brin par 2 autres brins pondéré par un paramètre (0 et t) qui correspondra plus tard au coord de l'intersection
+#TODO : faire ex avec 2 carré : a. on les sibdivisent par 2 puis on les merge b. idem mais avec des trous dans les carrés
 from multipledispatch import dispatch  # importing the module
 from Dart import *
 import uuid
@@ -17,7 +19,7 @@ class nMap:
         self.darts = []
         self.freeMarks = []
         self.faces = []
-        self.null_dart  = Dart(N_DIM, NB_MARKS)
+        self.null_dart  = myDart(N_DIM, NB_MARKS)
         for i in range(0, N_DIM+1):
             self.null_dart.betas[i] = self.null_dart
         for i in range(0, NB_MARKS):
@@ -25,7 +27,7 @@ class nMap:
             self.null_dart.marks[i] = False
 
     #desc: return an index if available (else -1)
-    # ref: algorithme 23 (Daminad & Lienhardt 2014)
+    # ref: algorithme 23 (Daminand & Lienhardt 2014)
     def reserveMarkMap(self):
         if len(self.freeMarks) == 0:
             return -1
@@ -378,4 +380,21 @@ class Face(nMap):
             listDarts.append(newGap.createDartNMap(properties[i]))
         self.gap.append(newGap)
         self.createOnePolygon(listDarts)
+        commun = self.getConnectedDart(self.gap[0])
+        self.setBeta2(commun[0], commun[1])
+        current = commun[0].betas[0]
+        while current != commun[0]:
+            self.setBeta2(current, current.betas[1].betas[2].betas[1])
+            current = current.betas[0]
         return listDarts
+
+    def subdiveDarts(self):
+        newsDartsInside = []
+        for d in self.darts:
+            sub_int = d.selfDivision()
+            sub_ext = d.betas[2].selfDivision()
+            newsDartsInside.append(sub_int)
+            d.betas[2].betas[2] = sub_int
+            d.betas[2] = sub_ext
+        self.darts.extend(newsDartsInside)
+        print(len(self.darts))

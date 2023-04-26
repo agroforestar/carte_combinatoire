@@ -25,8 +25,11 @@ class Dart:
 class myDart(Dart):
 
 
+
     def __init__(self, numberDim, nbMark):
         super(myDart, self).__init__(numberDim, nbMark)
+        self.properties = dict()
+        self.properties["id"] = uuid.uuid4()
 
     @classmethod
     def withValue(self, numberDim, nbMark, id : uuid.UUID, x:float=0, y:float=0):
@@ -51,4 +54,16 @@ class myDart(Dart):
 
     def getCoordinates(self):
         return [self.properties["x_pos"], self.properties["y_pos"]]
+
+
+
+    def selfDivision(self):
+        next = self.withValue(8, 2, uuid.uuid4(), self.properties["x_pos"]/2, self.properties["y_pos"]/2 )
+        print(self.betas[2].properties)
+        next.marks = self.marks.copy()
+        next.betas[0] = self.betas[0]
+        next.betas[1] = self
+        next.betas[2] = self.betas[2]
+        self.betas[0] = next
+        return next
 
