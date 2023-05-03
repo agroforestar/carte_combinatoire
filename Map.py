@@ -380,13 +380,36 @@ class Face(nMap):
             listDarts.append(newGap.createDartNMap(properties[i]))
         self.gap.append(newGap)
         self.createOnePolygon(listDarts)
-        commun = self.getConnectedDart(self.gap[0])
-        self.setBeta2(commun[0], commun[1])
-        current = commun[0].betas[0]
-        while current != commun[0]:
-            self.setBeta2(current, current.betas[1].betas[2].betas[1])
-            current = current.betas[0]
-        return listDarts
+        if (False):
+            commun = self.getConnectedDart(self.gap[0])
+            self.setBeta2(commun[0], commun[1])
+            current = commun[0].betas[0]
+            while current != commun[0]:
+                self.setBeta2(current, current.betas[1].betas[2].betas[1])
+                current = current.betas[0]
+
+        return newGap
+
+    def fillHole(self):
+        # listDarts = []
+        # newGap = Face()
+        # for i in range(0, nbSegment):
+        #     listDarts.append(newGap.createDartNMap(properties[i]))
+        # self.gap.append(newGap)
+        # self.createOnePolygon(listDarts)
+        listDarts = []
+            # current = self.betas[0]
+        for dart in self.darts:
+            nd = myDart.withProperties(N_DIM, NB_MARKS, dart.properties)
+            listDarts.append(nd)
+            # nd.properties["id"] = uuid.uuid4()
+            nd.betas[0] = dart.betas[1]
+            nd.betas[1] = dart.betas[0]
+            self.setBeta2(dart, nd)
+                # dart = dart.betas[0]
+        inside =Face.withDarts(listDarts)
+        return inside
+
 
     def subdiveDarts(self):
         newsDartsInside = []

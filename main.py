@@ -2,8 +2,8 @@
 
 # Press Maj+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-from Parseur import *
-from Crop import *
+# from Parseur import *
+# from Crop import *
 from carte import *
 import igraph as ig
 import matplotlib.pyplot as plt
@@ -129,20 +129,24 @@ if __name__ == '__main__':
                         {"id": uuid.uuid4(), "x_pos": 0.0, "y_pos": 3.0},
                         {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 3.0},
                         {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 0.0}], "Carre")
-    inside = carre.createGap(4, [{"id": uuid.uuid4(), "x_pos": 0.0, "y_pos": 0.0},
-                        {"id": uuid.uuid4(), "x_pos": 0.0, "y_pos": 3.0},
-                        {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 3.0},
-                        {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 0.0}], "carre")
+    inside = carre.createGap(4, [{"id": uuid.uuid4(), "x_pos": 1.0, "y_pos": 1.0},
+                        {"id": uuid.uuid4(), "x_pos": 1.0, "y_pos": 2.0},
+                        {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 2.0},
+                        {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 1.0}], "carre")
+    # rectin = am.createFace(4, [{"id": uuid.uuid4(), "x_pos": 1.0, "y_pos": 1.0},
+    #                    {"id": uuid.uuid4(), "x_pos": 1.0, "y_pos": 2.0},
+    #                    {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 2.0},
+    #                    {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 1.0}], "carre")
     pencil = Pencil()
 
-    print("arre.darts[0].betas")
+    print("carre.darts[0].betas")
+    inside.fillHole()
     print(carre.gap[0].darts)
     print(carre.darts)
     # carre.gap[0].subdiveDarts()
     carre.gap[0].drawVertexIter(carre.gap[0].darts[0])
     print("exterieur")
     carre.drawVertexIter(carre.darts[0])
-    pencil.drawMap(am)
-
-
+    pencil.drawSingleFace(inside)
+    pencil.drawSingleFace(carre)
 
