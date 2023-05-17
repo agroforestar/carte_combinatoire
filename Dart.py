@@ -12,6 +12,7 @@ class Dart:
     def __init__(self, numberDim, nbMark):
         self.betas = []
         self.marks = []
+        self.num : int = -1
         for i in range(0, numberDim+1):
             self.betas.append(None)
         for i in range(0, nbMark):
