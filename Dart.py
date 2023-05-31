@@ -50,15 +50,15 @@ class myDart(Dart):
 
 
     def __repr__(self):
-            return str( "id "+ str(self.properties["id"]))
-
+        # return str("id " + str(self.properties["id"]))
+        return str( "id "+ str(self.num)+" ")
 
     def getCoordinates(self):
         return [self.properties["x_pos"], self.properties["y_pos"]]
 
 
 
-    def selfDivision(self):
+    def selfDivision(self, coef):
         next = self.withValue(8, 2, uuid.uuid4(), self.properties["x_pos"]/2, self.properties["y_pos"]/2 )
         print(self.betas[2].properties)
         next.marks = self.marks.copy()
