@@ -16,7 +16,7 @@ class nMap:
     # desc: constructor + initialisation
     def __init__(self, id= uuid.uuid4()):
         self.id = id
-        self.nbd = 0
+        self.nbd:int = 0
         self.darts = []
         self.freeMarks = []
         self.faces = []
