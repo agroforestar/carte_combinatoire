@@ -5,8 +5,8 @@
 import uuid
 from multipledispatch import dispatch
 class Dart:
-##beta[0] : next
-##beta[1] : pred
+##beta[0] : pred
+##beta[1] : next
 ##beta[2] : involution
 
     def __init__(self, numberDim, nbMark):
@@ -31,6 +31,7 @@ class myDart(Dart):
         super(myDart, self).__init__(numberDim, nbMark)
         self.properties = dict()
         self.properties["id"] = uuid.uuid4()
+        self.properties["atyp"] = "UNKNOWN"
 
     @classmethod
     def withValue(self, numberDim, nbMark, id : uuid.UUID, x:float=0, y:float=0):
@@ -39,7 +40,7 @@ class myDart(Dart):
         new.properties["id"] = id
         new.properties["x_pos"] = x
         new.properties["y_pos"] = y
-        new.properties["type"] = "Tree" #mettre jargon pour désigner les différents éléments
+        new.properties["atyp"] = "UNKNOWN" #mettre jargon pour désigner les différents éléments
         return new
 
     @classmethod
@@ -51,7 +52,7 @@ class myDart(Dart):
 
     def __repr__(self):
         # return str("id " + str(self.properties["id"]))
-        return str( "id "+ str(self.num)+" ")
+        return str( ""+ str(self.num)+" ")
 
     def getCoordinates(self):
         return [self.properties["x_pos"], self.properties["y_pos"]]

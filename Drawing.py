@@ -8,7 +8,7 @@ import numpy as np
 class Pencil:
 
     # Draw a simple dart
-    def drawSingleDartArrow(self, m: nMap, d: myDart, coef :float, func, col):
+    def drawSingleDartArrow(self, m: nMap, d: myDart, coef: float, func, col):
         if d != m.null_dart:
             x = d.properties["x_pos"]
             y = d.properties["y_pos"]
@@ -20,6 +20,8 @@ class Pencil:
                     ny += 0.01
                 line = plt.arrow (x+nx*0.05, y+ny*0.05, nx*(coef-0.125), ny*(coef-0.125), head_width=0.06, head_length=0.06)
                 plt.setp(line, 'color', col)
+                dtxt = plt.text(x - nx*(coef-0.7), y+ny*(coef-0.7), str(d.num))
+                plt.setp(dtxt, 'color', col)
 
     def drawSingleDartMarker(self, m: nMap, d: myDart, coef :float, func, col, mark):
         if d != m.null_dart:
@@ -39,6 +41,7 @@ class Pencil:
                     plt.plot(x, y, color=col, marker='o', markersize=6)
             else:
                 mk = plt.plot(x, y, color='red', marker='o', markersize=6)
+            dtxt = plt.text(x, y-0.1, str(d.num))
 
 
 
@@ -53,48 +56,18 @@ class Pencil:
 
         plt.show()
 
+
     def drawSingleFace(self, map: nMap, face:Face):
-        #coord = face.getCoordFace()
-        #coord.append(coord[0])  # repeat the first point to create a 'closed loop'
 
         listdarts: list[myDart] = map.getFaceBeta(map.darts[face.dartid], 1)
-        coord = []
-        for dart in listdarts:
-            x = dart.properties["x_pos"]
-            y = dart.properties["y_pos"]
-            coord.append([x, y])
-        coord.append(coord[0])  # repeat the first point to create a 'closed loop'
-
-
-        xs, ys = zip(*coord)  # create lists of x and y values
-        xm = np.mean(xs)
-        ym = np.mean(ys)
-        coef = 0.9
-        nxs = [coef * (x - xm) + xm for x in xs]
-        nys = [coef * (y - ym) + ym for y in ys]
+        nxs, nys = map.getCoordListdartsScaled(listdarts, 1, 0.9)
         plt.plot(nxs, nys, color = "red")
-        print(coord)
+        # print(coord)
+
         if len(face.gap) > 0:
             for g in face.gap:
-
                 listdartsg: list[myDart] = map.getFaceBeta(map.darts[g.dartid], 0)
-                gcoord = []
-                for gdart in listdartsg:
-                    x = gdart.properties["x_pos"]
-                    y = gdart.properties["y_pos"]
-                    gcoord.append([x, y])
-                gcoord.append(gcoord[0])  # repeat the first point to create a 'closed loop'
-
-
-                #coord = g.getCoordFace()
-                #print(coord)
-                #coord.append(coord[0])  # repeat the first point to create a 'closed loop'
-                xs, ys = zip(*gcoord)  # create lists of x and y values
-                xm = np.mean(xs)
-                ym = np.mean(ys)
-                coef = 1.1
-                nxs = [coef * (x - xm) + xm for x in xs]
-                nys = [coef * (y - ym) + ym for y in ys]
+                nxs, nys = map.getCoordListdartsScaled(listdartsg, 1, 1.1)
                 plt.plot(nxs, nys, color="green" )
 
 
@@ -102,11 +75,11 @@ class Pencil:
     # Draw a face of a combinatorial map
     def drawFaceDarts(self, map:nMap, face:Face, beta):
 
-        self.drawSingleFaceDarts(map, face, beta, 0.9, 'red', 'orange')
+        self.drawSingleFaceDarts(map, face, beta, 0.95, 'red', 'orange')
         # print(coord)
         if len(face.gap) > 0:
             for gapface in face.gap:
-                self.drawSingleFaceDarts(map, gapface, beta, 1.09, 'blue', 'purple')
+                self.drawSingleFaceDarts(map, gapface, beta, 1.045, 'blue', 'purple')
 
 
     # Draw a face of a combinatorial map
@@ -137,37 +110,23 @@ class Pencil:
             drawbeta2 = 1
             beta = 1
 
-        dart = map.darts[face.dartid]
-        listdarts: list[myDart] = map.getFaceBeta(dart, beta)
-        x = []
-        y = []
-        sx = []
-        sy = []
+        numd = []
         b2 = []
         n = 0
-        numd = []
+        listdarts: list[myDart] = map.getFaceBeta(map.darts[face.dartid], beta)
         for dart in listdarts:
-            x.append(dart.properties["x_pos"])
-            y.append(dart.properties["y_pos"])
             numd.append(dart.num)
-            bok = 0;
+            bok = 0
             if len(dart.betas) > 2:
                 bok = 1
-                if dart.betas[2] != 0 :
+                if dart.betas[2] != map.null_dart:
                     bok = 2
             b2.append(bok)
             n = n + 1
 
-        xm = np.mean(x)
-        ym = np.mean(y)
-        nx = [coef * (x - xm) + xm for x in x]
-        ny = [coef * (y - ym) + ym for y in y]
-        nx.append(nx[0])
-        ny.append(ny[0])
-        mx = [(2-coef) * (x - xm) + xm for x in x]
-        my = [(2-coef) * (y - ym) + ym for y in y]
-        mx.append(mx[0])
-        my.append(my[0])
+        nx, ny = map.getCoordListdartsScaled(listdarts, 1, coef)
+        mx, my = map.getCoordListdartsScaled(listdarts, 1, 2-coef)
+
         i = 0
         px = [0,0]
         py = [0,0]
@@ -194,7 +153,7 @@ class Pencil:
                 py[1] = my[i] + (my[i+1]- my[i] ) * 0.45
                 # line = plt.line(px, py)
                 line = plt.arrow(px[0], py[0], (px[1] - px[0]) * 0.91, (py[1] - py[0]) * 0.91, head_width=0.04, head_length=0.05)
-            print(i, j, b2[i], px, py)
+            # print(i, j, b2[i], px, py)
             i = i + 1
 
 
@@ -202,7 +161,7 @@ class Pencil:
     # Draw a face of a combinatorial map
     def drawFace(self, map: nMap, face:Face):
 
-        coord = map.getCoordFromFace(map.darts[face.dartid], 1)
+        coord = map.getCoordFromFace(map.darts[face.dartid], 0)
 
         xs, ys = zip(*coord)  # create lists of x and y values
         xm = np.mean(xs)
@@ -218,7 +177,7 @@ class Pencil:
                 #print(gcoord)
                 #gcoord.append(gcoord[0])  # repeat the first point to create a 'closed loop'
 
-                gcoord = map.getCoordFromFace(map.darts[g.dartid], 0)
+                gcoord = map.getCoordFromFace(map.darts[g.dartid], 1)
 
                 xs, ys = zip(*gcoord)  # create lists of x and y values
                 xm = np.mean(xs)
@@ -227,6 +186,9 @@ class Pencil:
                 nxs = [coef * (x - xm) + xm for x in xs]
                 nys = [coef * (y - ym) + ym for y in ys]
                 plt.plot(nxs, nys, color="green" )
+
+        dtxt = plt.text(xm-0.05, ym - 0.1, face.name)
+        plt.setp(dtxt, 'color', "red")
 
     # Draw faces of a combinatorial map
     # input : list of faces
@@ -262,16 +224,24 @@ class Pencil:
         self.drawMap(map)
         self.showFig()
 
-    def drawMapDarts(self, map: nMap):
-        for f in map.faces:
-            self.drawFaceDarts(map, f, 1)
+    def drawMapDarts(self, map: nMap, dofaces: int):
+        if dofaces > 0:
+            for f in map.faces:
+                self.drawFaceDarts(map, f, 0)
         for d in map.darts:
-            # self.drawSingleDartArrow(map, d, 0.48, 0, 'lightgrey')
+            #self.drawSingleDartArrow(map, d, 0.48, 0, 'lightgrey')
             self.drawSingleDartArrow(map, d, 0.48, 1, 'grey')
             self.drawSingleDartMarker(map, d, 0.35, 2, 'green', '^')
 
-    def drawMapDartsFig(self, map: nMap):
+    def drawMapDartsFig(self, map: nMap, dofaces: int ):
         self.initFig()
-        self.drawMapDarts(map)
+        self.drawMapDarts(map, dofaces)
         self.showFig()
 
+    def drawDualMapDarts(self, map: nMap, dofaces: int):
+        if dofaces > 0:
+            self.drawMap(map)
+        for d in map.darts:
+            #self.drawSingleDartArrow(map, d, 0.48, 0, 'lightgrey')
+            self.drawSingleDartArrow(map, d, 0.55, 2, 'blue')
+            #self.drawSingleDartMarker(map, d, 0.35, 2, 'green', '^')
