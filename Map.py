@@ -7,8 +7,10 @@
 from multipledispatch import dispatch  # importing the module
 from Dart import *
 import uuid
+import numpy as np
 NB_MARKS = 8 #taille allouee du tableau au dart
 N_DIM = 2  #nombre de dimension de la carte
+DUMMY = 99999
 
 #ref: Listing 5.2
 class nMap:
@@ -42,7 +44,7 @@ class nMap:
         self.freeMarks.append(i)
 
     # ref: algorithme 25 (Daminad & Lienhardt 2014)
-    #desc: retrun boolean value of index i in on dart d
+    #desc: return boolean value of index i in on dart d
     def isMarkedMap(self, d:Dart, i:int):
         return d.marks[i]
 
@@ -122,6 +124,11 @@ class nMap:
                     self.unmarkMap(cur.betas[self.inv(i)].betas[j], ma)
         self.freeMarkMap(ma)
 
+    def printfDartList(selfself, dartlist: list[myDart]):
+        for dart in dartlist:
+            cur = dart
+            print("Id:"+str(cur) + " b0:" + str(cur.betas[0]) + " b1:" + str(cur.betas[1])  + " b2:" + str(cur.betas[2]) + "props" + str(cur.properties))
+
         # ref: algorithme 30 (Damiand & Lienhardt 2014)
     def drawVertexIter(self, d: Dart):
             ma = self.reserveMarkMap()
@@ -186,11 +193,12 @@ class nMap:
         return d
 
 
-    def createFace(self, nbSegment :int, properties:list, type: str = "Crop"):
+    def createFace(self, nbSegment :int, properties:list, facename: str = "FaceGeneric"):
         listdarts = []
         for i in range(0, nbSegment):
             listdarts.append(self.createDartNMap(properties[i]))
         face = Face()
+        face.name = facename
         # face.darts = listdarts
         # self.darts.append(listdarts)
         self.faces.append(face)
@@ -199,14 +207,14 @@ class nMap:
         self.buildPolygonBeta1(listdarts)
         return face
 
-    def fillHoleFace(self, hole):
+    def fillHoleFace(self, hole, facename: str = "FaceHoleGeneric"):
         # listDarts = []
         # newGap = Face()
         # for i in range(0, nbSegment):
         #     listDarts.append(newGap.createDartNMap(properties[i]))
         # self.gap.append(newGap)
         # self.createOnePolygon(listDarts)
-        listdarts = hole.getFaceBeta(hole.darts[0], 0)
+        listdarts = hole.getFaceBeta(hole.darts[0], 1)
         newdarts = []
         for dart in listdarts:
             nd = myDart.withProperties(N_DIM, NB_MARKS, dart.properties)
@@ -220,10 +228,11 @@ class nMap:
         self.bfaces.append(newdarts[0].num)
         newface.dartid = newdarts[0].num
         # self.darts.append(newDarts)
-        newface.buildPolygonBeta1(newdarts)
+        newface.buildPolygonBeta0(newdarts)
+        newface.name = facename
         return newface
 
-    def createFilledGapFace(self, face, nbSegment: int, properties: list, objectType: str):
+    def createFilledGapFace(self, face, nbSegment: int, properties: list, nameface: str):
         listdarts: list[myDart] = []
         for i in range(0, nbSegment):
             listdarts.append(self.createDartNMap(properties[i]))
@@ -233,6 +242,8 @@ class nMap:
         #self.bfaces.append(listdarts[0].num)
         newgap.dartid = listdarts[0].num
         self.buildPolygonBeta0(listdarts)
+        newgap.name = "Hole"+face.name
+        newgap.ishole = 1
 
         # listdarts = hole.getFaceBeta(hole.darts[0], 0)
         newdarts: list[myDart] = []
@@ -245,9 +256,9 @@ class nMap:
             dart.betas[2] = nd
         newface = Face()
         #newface.darts = newdarts
-        self.faces.append(newface)
         self.bfaces.append(newdarts[0].num)
         newface.dartid = newdarts[0].num
+        newface.name = nameface
         self.buildPolygonBeta1(newdarts)
         self.faces.append(newface)
         return newface
@@ -299,30 +310,109 @@ class nMap:
         return outdarts
 
 
-    def createOutsideFace(self, d ):
+    def getUnconnectedBeta2Fast(self, dstart):
+        outdarts = []
+        no = 0
+        for d in self.darts:
+            if d.betas[2] == self.null_dart and d.deleted == 0:
+                outdarts.append(d)
+                no = no + 1
+
+        return outdarts
+
+
+
+    def createOutsideFace(self, d, mode):
         # retrieve all darts without beta2
 
-        listdarts = self.getUnconnectedBeta2(d)
+        #listdarts = self.getUnconnectedBeta2(d)
+        listdarts = self.getUnconnectedBeta2Fast(d)
         nb = len(listdarts)
         #connect darts
         #for i in range(0, nbSegment):
         #    listoutdarts.append(self.createDartNMap(properties[i]))
 
+        xmin = 99999.0
+        ymin = xmin
+        xmax = -xmin
+        ymax = xmax
+
         print("/// Outside  Nb darts : " + str(nb) + " ////")
 
         # listDarts = hole.getFaceBeta(hole.darts[0], 0)
-        newdarts = []
+        #newdarts = []
         for dart in listdarts:
-            nd = self.createDartNMap(dart.properties)
-            newdarts.append(nd)
-            # nd.properties["id"] = uuid.uuid4()
-            nd.betas[2] = dart
-            dart.betas[2] = nd
-        newface = Face()
-        # newface.darts = newdarts
-        self.faces.append(newface)
-        self.bfaces.append(newdarts[0].num)
-        self.buildPolygonBeta1(newdarts)
+            cur = dart
+            print("Outside:" + " Id:" + str(cur) + " b0:" + str(cur.betas[0]) + " b1:" + str(
+                   cur.betas[1]) + " b2:" + str(cur.betas[2]) + "props" + str(cur.properties) )
+            x = dart.properties["x_pos"]
+            y = dart.properties["y_pos"]
+            if x < xmin:
+                xmin = x
+            if x > xmax:
+                xmax = x
+            if y < ymin:
+                ymin = y
+            if y > ymax:
+                ymax = y
+            #nd = self.createDartNMap(dart.properties)
+            #newdarts.append(nd)
+            ## nd.properties["id"] = uuid.uuid4()
+            #nd.betas[2] = dart
+            #dart.betas[2] = nd
+
+        print("Outside : "+str(xmin)+" , "+str(xmax)+" , "+str(ymin)+" , "+str(ymax))
+
+        if mode == 0:
+            nd = 0
+            # newface.darts = newdarts
+            #dar = self.createDartNMap(dart.properties)
+            # newdarts.append(nd)
+            ## nd.properties["id"] = uuid.uuid4()
+            newdarts = []
+            dpred = self.null_dart
+            for dart in listdarts:
+                dar = self.createDartNMap()
+                dar.betas[2] = dart
+                dart.betas[2] = dar
+                dar.betas[0] = dpred
+                newdarts.append(dar)
+                if dpred != self.null_dart:
+                    dpred.betas[1] = dar
+                dpred = dar
+                dar.properties["atyp"] = "BD_"+dart.properties["atyp"]
+                dar.properties["x_pos"] = dart.properties["x_pos"]
+                #dar.properties["y_pos"] = ymax + dart.properties["y_pos"]
+                y = dart.properties["y_pos"]
+                dar.properties["y_pos"] = y * (1 + 1.3*(y-ymin)/(ymax-ymin))
+                cur = dar
+                print("New Outside:" + " Id:" + str(cur) + " b0:" + str(cur.betas[0]) + " b1:" + str(
+                    cur.betas[1]) + " b2:" + str(cur.betas[2]) + "props" + str(cur.properties))
+            dpred.betas[1] = newdarts[0]
+            newdarts[0].betas[0] = dpred
+
+            #self.buildPolygonBeta0(newdarts)
+            newface = Face()
+            self.faces.append(newface)
+            newface.name = "Outside"
+            self.bfaces.append(newdarts[0].num)
+            #self.buildPolygonBeta0(newdarts)
+
+        if Face and mode == 1:
+            outside = self.createFace(4, [{"id": uuid.uuid4(), "x_pos": xmin-1, "y_pos": ymin-1, "atyp": "ENV"},
+                                          {"id": uuid.uuid4(), "x_pos": xmin-1, "y_pos": 3*ymax, "atyp": "ENV"},
+                                          {"id": uuid.uuid4(), "x_pos": xmax+1, "y_pos": 3*ymax, "atyp": "ENV"},
+                                          {"id": uuid.uuid4(), "x_pos": xmax+1, "y_pos": ymin-1, "atyp": "ENV"}], "System")
+            #newface = Face()
+            # newface.darts = newdarts
+            #self.faces.append(newface)
+            #newface.name = "Border"
+            #newface.ishole = 1
+            #self.bfaces.append(newdarts[0].num)
+            #self.buildPolygonBeta0(newdarts)
+            #outside.gap.append(newface)
+            newface = outside
+
         return newface
 
     # ref: algorithme 36 (Daminad & Lienhardt 2014)
@@ -356,8 +446,8 @@ class nMap:
     # ref: algorithme 44 (Damiand & Lienhardt 2014)
     def oneSewMyMap(self, d1:Dart, d2:Dart):
         # if self.isFreeNMap(d1, 0)  :
-            d1.betas[0] = d2
-            d2.betas[self.inv(0)] = d1
+            d1.betas[1] = d2
+            d2.betas[0] = d1
 
     # Fixe le beta2 (le dart dans le sens inverse)
     # input : current le date traité
@@ -375,9 +465,9 @@ class nMap:
 
     def isBeta2(self, curent:myDart, d:myDart):
         coord_current = curent.getCoordinates()
-        coord_next = curent.betas[0].getCoordinates()
+        coord_next = curent.betas[1].getCoordinates()
         coord_d = d.getCoordinates()
-        coord_pred = d.betas[1].getCoordinates()
+        coord_pred = d.betas[0].getCoordinates()
         if coord_d == coord_next and coord_current == coord_pred:
             return True
         else:
@@ -454,6 +544,20 @@ class nMap:
         return coord
 
 
+    def setCoordFaceCenter(self, d: Dart, beta: int):
+        xs = 0
+        ys = 0
+        n = 0
+        for dart in listdart:
+            xs += dart.properties["x_pos"]
+            ys += dart.properties["y_pos"]
+            n += 1
+        if n > 0:
+            xs /= n
+            ys /= n
+        return xs, ys
+
+
     # Renvoit la liste des coordonées rattachées aux darts composant la face
     def getCoordMap(self):
         coord = []
@@ -462,6 +566,60 @@ class nMap:
             y = dart.properties["y_pos"]
             coord.append([x, y])
         return coord
+
+
+    def getCoordListdarts(self, listdart, close: int):
+        coord = []
+        for dart in listdart:
+            x = dart.properties["x_pos"]
+            y = dart.properties["y_pos"]
+            coord.append([x, y])
+        if close != 0:
+            coord.append(coord[0])
+        return coord
+
+
+
+    def getCoordListdartsWithCtr(self, listdart):
+        coord = self.getCoordListdarts(listdart, 0)
+        xs, ys = zip(*coord)  # create lists of x and y values
+        xm = np.mean(xs)
+        ym = np.mean(ys)
+        return coord, xm, ym
+
+
+
+    def getCoordListdartsCenter(self, listdarts: list[myDart]):
+        xs = 0
+        ys = 0
+        n = 0
+        for dart in listdarts:
+            xs += dart.properties["x_pos"]
+            ys += dart.properties["y_pos"]
+            n += 1
+        if n > 0:
+            xs /= n
+            ys /= n
+        return xs, ys
+
+
+
+    def getCoordListdartsScaled(self, listdart, closed: int, coef: float):
+        xs = []
+        ys = []
+        for dart in listdart:
+            xs.append (dart.properties["x_pos"])
+            ys.append (dart.properties["y_pos"])
+        xm = np.mean(xs)
+        ym = np.mean(ys)
+        nxs = [coef * (x - xm) + xm for x in xs]
+        nys = [coef * (y - ym) + ym for y in ys]
+        if closed != 0 :
+            nxs.append(nxs[0])
+            nys.append(nys[0])
+        return nxs, nys
+
+
 
     def reverseMapOld(self, d:Dart):
         face = self.getFace(d)
@@ -473,9 +631,10 @@ class nMap:
     def reverseMap(self, d: Dart):
         listdarts: list[myDart] = self.getFaceBeta(d, 1)
         for dart in listdarts:
-            temp = dart.betas[0]
-            dart.betas[0] = dart.betas[1]
-            dart.betas[1] = temp
+            if d.deleted == 0:
+                temp = dart.betas[0]
+                dart.betas[0] = dart.betas[1]
+                dart.betas[1] = temp
 
 
     def getConnectedDart(self, cm:'nMap'):
@@ -486,24 +645,25 @@ class nMap:
         while not fin:
             print(i)
             d = self.darts[i]
-            for d_prime in cm.darts:
-                d_next = d.betas[0]
-                d_pred = d.betas[1]
-                d_prime_next = d_prime.betas[0]
-                d_prime_pred = d_prime.betas[1]
+            if d.deleted == 0:
+                for d_prime in cm.darts:
+                    d_next = d.betas[1]
+                    d_pred = d.betas[0]
+                    d_prime_next = d_prime.betas[1]
+                    d_prime_pred = d_prime.betas[0]
 
-                if d.getCoordinates() == d_prime_next.getCoordinates() and d_next.getCoordinates() == d_prime.getCoordinates(): # cas où l'orientation des 2 cartes sont inversé
-                    print("sens inverse inverse trouvé")
-                    output.append(d)
-                    output.append(d_prime)
-                    fin = True
-                elif d.getCoordinates() == d_prime.getCoordinates() and d_next.getCoordinates() == d_prime_next.getCoordinates():
-                    print("sens id inverse trouvé")
-                    # MJ self.reverseMap(d_prime)
-                    output.append(d)
-                    # MJ output.append(d_prime.betas[1])
-                    output.append(d_prime_next)
-                    fin = True
+                    if d.getCoordinates() == d_prime_next.getCoordinates() and d_next.getCoordinates() == d_prime.getCoordinates(): # cas où l'orientation des 2 cartes sont inversé
+                        print("sens inverse inverse trouvé")
+                        output.append(d)
+                        output.append(d_prime)
+                        fin = True
+                    elif d.getCoordinates() == d_prime.getCoordinates() and d_next.getCoordinates() == d_prime_next.getCoordinates():
+                        print("sens id inverse trouvé")
+                        # MJ self.reverseMap(d_prime)
+                        output.append(d)
+                        # MJ output.append(d_prime.betas[1])
+                        output.append(d_prime_next)
+                        fin = True
 
             i = i+1
         return output
@@ -511,7 +671,7 @@ class nMap:
     def connectDartBeta2(self, cm:'nMap'):
 
         for d in self.darts:
-            if d.betas[2] == self.null_dart:
+            if d.betas[2] == self.null_dart and d.deleted == 0:
                 d_next = d.betas[1]
                 d_pred = d.betas[0]
                 x = d.properties["x_pos"]
@@ -521,7 +681,7 @@ class nMap:
                 xp = d_pred.properties["x_pos"]
                 yp = d_pred.properties["y_pos"]
 
-                listdarts: list[myDart] = self.getFaceBeta(self.darts[cm.dartid], 1)
+                listdarts: list[myDart] = self.getFaceBeta(self.darts[cm.dartid], 0)
                 for dm in listdarts:
                     if d.betas[2] == self.null_dart:
                         dm_next = dm.betas[1]
@@ -551,7 +711,7 @@ class nMap:
                 xp = d_pred.properties["x_pos"]
                 yp = d_pred.properties["y_pos"]
 
-                listdarts: list[myDart] = self.getFaceBeta(self.darts[face.dartid], 1)
+                listdarts: list[myDart] = self.getFaceBeta(self.darts[face.dartid], 0)
                 for dm in listdarts:
                     if d.betas[2] == self.null_dart:
                         dm_next = dm.betas[1]
@@ -564,7 +724,7 @@ class nMap:
                         ypcm = dm_pred.properties["y_pos"]
                         dst = (x - xncm) * (x - xncm) + (y - yncm) * (y - yncm)
                         dste = (xn - xcm) * (xn - xcm) + (yn - ycm) * (yn - ycm)
-                        if dst < 0.001 and dste < 0.001 :
+                        if dst < 0.01 and dste < 0.01 :
                             d.betas[2] = dm
                             dm.betas[2] = d
 
@@ -656,18 +816,185 @@ class nMap:
     def subdiveDart2(self, d, fbeta: int, coef: float):
         nd = self.subdiveDart(d, fbeta, coef)
         if nd != self.null_dart and d.betas[2] != self.null_dart :
-            nd2 = self.subdiveDart(d.betas[2], 1-fbeta, coef)
+            nd2 = self.subdiveDart(d.betas[2], fbeta, coef)
+            self.setBeta2(d.betas[2], nd)
             if nd2 != self.null_dart :
-                 self.setBeta2(d,nd2)
-                 self.setBeta2(d.betas[2], nd)
+                self.setBeta2(d,nd2)
+                #self.setBeta2(d.betas[2], nd)
+
+    def deleteDart(self, d):
+        if d != self.null_dart:
+            d.betas[0] = self.null_dart
+            d.betas[1] = self.null_dart
+            d.betas[2] = self.null_dart
+            d.deleted = 1
+            d.properties["x_pos"] = -99999.99
+            d.properties["y_pos"] = -99999.99
+
+    def mergeTwoFacesInOne(self, face1, face2):
+        done = 0
+        dartface = []
+        for dart in self.darts:
+            dartface.append(-1)
+
+        listdarts1: list[myDart] = self.getFaceBeta(self.darts[face1.dartid], 1)
+        for dart in listdarts1:
+            dartface[dart.num-1] = 1
+        listdarts2: list[myDart] = self.getFaceBeta(self.darts[face2.dartid], 1)
+        for dart in listdarts2:
+            dartface[dart.num-1] = 2
+        for dart in listdarts1:
+            if dart.betas[2] != self.null_dart:
+                 cur = dart.betas[2]
+                 if dartface[dart.num-1] == 1 and dartface[cur.num-1] == 2:
+                    print (" F1: "+str(dart.num) + " "+ str(self.darts[dart.num-1].num) + "   F2: "+str(cur.num) + " "+ str(self.darts[cur.num-1].num))
+                    pred = dart.betas[0]
+                    next = cur.betas[1]
+                    pred.betas[1] = next
+                    next.betas[0] = pred
+                    pred = cur.betas[0]
+                    next = dart.betas[1]
+                    pred.betas[1] = next
+                    next.betas[0] = pred
+                    self.deleteDart(dart)
+                    self.deleteDart(cur)
+                    face2.dartid = cur.num
+                    done += 1
+
+    def mergeTwoFacesIntoOne(self, face1, face2):
+        self.mergeTwoFacesInOne(face1,face2)
+        face2.dartid = -1
+
+    def createDual(self):
+        dualmap = nMap()
+        idface = []
+        cxface = []
+        cyface = []
+        mkface = []
+        dartface = []
+
+        for dart in self.darts:
+            dartface.append(-1)
+
+        nbf = 0
+        for face in self.faces:
+            idface.append(nbf)
+            listdarts: list[myDart] = self.getFaceBeta(self.darts[face.dartid], 1)
+            xm, ym = self.getCoordListdartsCenter(listdarts)
+            cxface.extend([xm])
+            cyface.extend([ym])
+            for fhole in face.gap:
+                listdarts.extend (self.getFaceBeta(self.darts[fhole.dartid], 1))
+            for dart in listdarts:
+                nd = dart.num - 1
+                dartface[nd] = nbf
+                #cur = dart
+                #print("Face:" + str(nbf) + " Id:" + str(cur) + " b0:" + str(cur.betas[0]) + " b1:" + str(
+                #    cur.betas[1]) + " b2:" + str(cur.betas[2]) + "props" + str(cur.properties) + " " + str(face.name))
+            for nface in self.faces:
+                mkface.append(0)
+            nbf += 1
+
+        i = 0
+        for face in self.faces:
+
+            listdarts: list[myDart] = self.getFaceBeta(self.darts[face.dartid], 1)
+            #xm, ym = self.getCoordListdartsCenter(listdarts)
+            xm = cxface[i]
+            ym = cyface[i]
+            for dart in listdarts:
+                b2dart = dart.betas[2]
+                if b2dart != self.null_dart:
+                    nd = b2dart.num - 1
+                    j = dartface[nd]
+                    if j != i and j >= 0:
+                        if mkface[i*nbf+j] == 0:
+                            mkface[i*nbf+j] = 1
+
+                            newdart = dualmap.createDartNMap()
+                            newdart.betas[0] = dualmap.null_dart
+                            newdart.betas[1] = dualmap.null_dart
+                            newdart.betas[2] = dualmap.null_dart
+                            newdart.properties["x_pos"] = xm
+                            newdart.properties["y_pos"] = ym
+                            newdart.properties["atyp"] = "DUAL" + dart.properties["atyp"]
+                            mkface[j * nbf + i] = 1
+                            #listndarts: list[myDart] = self.getFaceBeta(b2dart, 1)
+                            #xf, yf = self.getCoordListdartsCenter(listndarts)
+                            xf = cxface[j]
+                            yf = cyface[j]
+                            new2dart = dualmap.createDartNMap()
+                            new2dart.betas[0] = dualmap.null_dart
+                            new2dart.betas[1] = dualmap.null_dart
+                            new2dart.betas[2] = dualmap.null_dart
+                            new2dart.properties["x_pos"] = xf
+                            new2dart.properties["y_pos"] = yf
+                            new2dart.properties["atyp"] = "DUAL" + b2dart.properties["atyp"]
+                            newdart.betas[2] = new2dart
+                            new2dart.betas[2] = newdart
+                            #cur = dart
+                            #print("Face:"+str(i)+" Id:" + str(cur) + " b0:" + str(cur.betas[0]) + " b1:" + str(
+                            #    cur.betas[1]) + " b2:" + str(cur.betas[2]) + "props" + str(cur.properties) + " " + str(face.name))
+                            #cur = b2dart
+                            #print("Face:"+str(j)+" Id:" + str(cur) + " b0:" + str(cur.betas[0]) + " b1:" + str(
+                            #    cur.betas[1]) + " b2:" + str(cur.betas[2]) + "props" + str(cur.properties) )
+                            #newdart.num = 1000 + dart.num
+            i += 1
+
+        return dualmap
+
+
+    def createSimpleDual(self):
+        dualmap = nMap()
+        for dart in self.darts:
+            listdarts: list[myDart] = self.getFaceBeta(dart, 0)
+            xm, ym = self.getCoordListdartsCenter(listdarts)
+            x = dart.properties["x_pos"]
+            y = dart.properties["y_pos"]
+            xd = 0.1*(x-xm) + xm
+            yd = 0.1*(y-ym) + ym
+            xd = xm
+            yd = ym
+
+            dtmp0 = dart.betas[0]
+            dtmp1 = dart.betas[1]
+
+            #if dtmp0.betas[2] != self.null_dart and dtmp1.betas[2] != self.null_dart :
+
+            #if dtmp0 != self.null_dart and dtmp1 != self.null_dart :
+            #if dtmp0.betas[2] != self.null_dart or dtmp1.betas[2] != self.null_dart :
+            if True:
+                newdart = dualmap.createDartNMap()
+                if dtmp0.betas[2] != self.null_dart:
+                   newdart.betas[0] = dtmp0.betas[2]
+                else:
+                    newdart.betas[0] = dualmap.null_dart
+                if dtmp1.betas[2] != self.null_dart:
+                    newdart.betas[1] = dtmp1.betas[2]
+                else:
+                    newdart.betas[1] = dualmap.null_dart
+                if  dart.betas[2] != self.null_dart:
+                    newdart.betas[2] = dart.betas[2]
+                else:
+                    newdart.betas[2] = dualmap.null_dart
+                newdart.properties["x_pos"] = xd
+                newdart.properties["y_pos"] = yd
+                newdart.properties["atyp"] = "DUAL"+dart.properties["atyp"]
+                newdart.num = 1000+dart.num
+        return dualmap
 
 
 class Face:
 
     def __init__(self):
-        super(Face, self).__init__()
+        # super(Face, self).__init__()
         self.gap = []
-        self.dartid = -1;
+        self.dartid: int = -1
+        self.ishole: int = 0
+        self.name: str = "Unknown"
+        self.posx: float = DUMMY
+        self.posy: float = DUMMY
+
 
     @classmethod
     def withDarts(cls, listDarts:list):

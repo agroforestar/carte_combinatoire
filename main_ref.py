@@ -343,7 +343,7 @@ def createPlantPhenomics(do_outside):
     #
 
     if True:
-        rect1 = createRect (am, 0.0, 0.0, 2.0, 10.0, "LSA", "UVS1")
+        rect1 = createRect (am, 0.0, 0.0, 2.0, 10.0, "LSA", "LSA1")
         myhole1 = createHole(am, rect1, 0.3, 1.0, 1.0, 1.7, "TREE", "Tree1")
         myhole2 = createHole(am, rect1, 0.3, 3.5, 1.0, 4.2, "TREE", "Tree2")
         myhole3 = createHole(am, rect1, 0.3, 6.0, 1.0, 6.7, "TREE", "Tree3")
@@ -351,11 +351,11 @@ def createPlantPhenomics(do_outside):
 
         carre = createRect(am, 2.0, 0.0, 8.0, 10.0, "CROP", "Crop")
 
-        rect2 = createRect (am, 8.0, 0.0, 10.0, 10.0, "LSA", "UVS2")
-        myhole5 = createHole(am, rect2, 8.5, 1.0, 9.5, 1.7, "TREE", "Tree5")
-        myhole6 = createHole(am, rect2, 8.5, 3.5, 9.5, 4.2, "TREE", "Tree6")
-        myhole7 = createHole(am, rect2, 8.5, 6.0, 9.5, 6.7, "TREE", "Tree7")
-        myhole8 = createHole(am, rect2, 8.5, 8.5, 9.5, 9.2, "TREE", "Tree8")
+        rect2 = createRect (am, 8.0, 0.0, 10.0, 10.0, "LSA", "LSA2")
+        myhole5 = createHole(am, rect2, 9.0, 1.0, 9.7, 1.7, "TREE", "Tree5")
+        myhole6 = createHole(am, rect2, 9.0, 3.5, 9.7, 4.2, "TREE", "Tree6")
+        myhole7 = createHole(am, rect2, 9.0, 6.0, 9.7, 6.7, "TREE", "Tree7")
+        myhole8 = createHole(am, rect2, 9.0, 8.5, 9.7, 9.2, "TREE", "Tree8")
 
         am.connectDartBeta2Face(carre)
 
@@ -376,29 +376,20 @@ def createPlantPhenomics(do_outside):
 
     print ("\n Let's draw now  \n")
 
-    if do_outside == 0:
-        pencil0 = Pencil()
-        pencil0.initFig()
-        pencil0.drawMap(am, DRAW_DART + DRAW_TXT)
-        pencil0.showFig()
-        #pencil1 = Pencil()
-        #pencil1.initFig()
-        #pencil1.drawMapDarts(am, DRAW_DART + DRAW_TXT)
-        #pencil1.showFig()
-
     pencil = Pencil()
     pencil.initFig()
 
-   # pencil.drawMap(am, DRAW_FACE + DRAW_DART + DRAW_TXT)
-    #pencil.drawMapDarts(am, DRAW_FACE + DRAW_DART + DRAW_TXT)
+    #pencil.drawFaceDarts(am, rect1, 1, 1)
+    pencil.drawMap(am, DRAW_FACE + DRAW_DART + DRAW_TXT)
+    #pencil.drawMapDarts(am, DRAW_DART + DRAW_TXT)
 
     if do_outside > 0:
-        pencil.drawFace(am, outside, DRAW_FACE+DRAW_TXT)
+        pencil.drawFace(am, outside, DRAW_DART+DRAW_FACE+DRAW_TXT)
 
     print ("\n Let's draw now  \n")
     pencil.drawDualMapDarts (dual_am, DRAW_DART+DRAW_FACE)
     pencil.showFig()
-
+    #am.drawVertexIter (am.darts[triang.dartid])
 
 
 
@@ -407,58 +398,34 @@ def createPlantPhenomics_croissance(do_outside, do_merge:int =0):
 
     am = nMap()
     #
-    rect1_1 = am.createFace(5, [{"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 0.7, "atyp": "Tree"},
-                                {"id": uuid.uuid4(), "x_pos": 0.5, "y_pos": 2.0, "atyp": "Tree"},
-                                {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 3.3, "atyp": "Tree"},
-                                {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 3.0, "atyp": "Tree"},
-                                {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 1.05, "atyp": "Tree"}], "Tree1")
 
+    rect1_A = createRect(am, 0.0, 0.0, 2.0, 1.0, "LSA", "LSA1_A")
+    rect1_1 = createRect(am, 0.0, 1.0, 2.0, 3.0, "TREE", "Tree1")
+    rect1_B = createRect(am, 0.0, 3.0, 2.0, 4.0, "LSA", "LSA1_B")
+    rect1_2 = createRect(am, 0.0, 4.0, 2.0, 6.0, "TREE", "Tree2")
+    rect1_C = createRect(am, 0.0, 6.0, 2.0, 7.0, "LSA", "LSA1_C")
+    rect1_3 = createRect(am, 0.0, 7.0, 2.0, 9.0, "TREE", "Tree3")
+    rect1_D = createRect(am, 0.0, 9.0, 2.0, 10.0, "LSA", "LSA1_D")
 
-    # rect1_2 = am.createFace(5, [{"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 3.7, "atyp": "Tree"},
-    #                   {"id": uuid.uuid4(), "x_pos": 0.5, "y_pos": 5.0, "atyp": "Tree"},
-    #                   {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 6.3, "atyp": "Tree"},
-    #                   {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 6.0, "atyp": "Tree"},
-    #                   {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 4.0, "atyp": "Tree"}], "Tree2")
-
-    rect1_3 = am.createFace(5, [{"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 6.7, "atyp": "Tree"},
-                      {"id": uuid.uuid4(), "x_pos": 0.5, "y_pos": 8.0, "atyp": "Tree"},
-                      {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 9.3, "atyp": "Tree"},
-                      {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 9, "atyp": "Tree"},
-                      {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 7.0, "atyp": "Tree"}], "Tree3")
-
-    rect1_LSA = am.createFace(14, [{"id": uuid.uuid4(), "x_pos": 0.0, "y_pos": 0.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 0.0, "y_pos": 10.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 10.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 9.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 9.3, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 0.5, "y_pos": 8.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 6.7, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 7.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 3.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 3.3, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 0.5, "y_pos": 2.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 1.5, "y_pos": 0.7, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 1.05, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 0.0, "atyp": "LSA"}],"UVS1")
-
-    # rect1_2 = createHole(am, rect1_LSA, 0.3, 3.5, 1.0, 4.2, "Tree", "Tree2")
-
-    mix_1 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 1.05, "atyp": "Tree"}, # y = 1 ok mais mix connecté à l'outside  | y = 1.05 Bug index out of range
+    mix_1 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 1.0, "atyp": "Tree"},
                               {"id": uuid.uuid4(), "x_pos": 3.0, "y_pos": 2.0, "atyp": "Tree"},
-                              {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 3.0, "atyp": "Tree"}], "Mix1")
+                              {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 3.0, "atyp": "Tree"}], "Tree1")
 
-    # mix_2 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 4.0, "atyp": "Tree"},
-    #                           {"id": uuid.uuid4(), "x_pos": 3.0, "y_pos": 5.0, "atyp": "Tree"},
-    #                           {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 6.0, "atyp": "Tree"}], "Tree2")
+    mix_2 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 4.0, "atyp": "Tree"},
+                              {"id": uuid.uuid4(), "x_pos": 3.0, "y_pos": 5.0, "atyp": "Tree"},
+                              {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 6.0, "atyp": "Tree"}], "Tree2")
 
     mix_3 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 7.0, "atyp": "Tree"},
                               {"id": uuid.uuid4(), "x_pos": 3.0, "y_pos": 8.0, "atyp": "Tree"},
-                              {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 9.0, "atyp": "Tree"}], "Mix3")
+                              {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 9.0, "atyp": "Tree"}], "Tree3")
 
-    carre = am.createFace(16, [{"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 0.0, "atyp": "CROP"},
+    carre = am.createFace(22, [{"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 0.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 1.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 3.0, "y_pos": 2.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 3.0, "atyp": "CROP"},
+                               {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 4.0, "atyp": "CROP"},
+                               {"id": uuid.uuid4(), "x_pos": 3.0, "y_pos": 5.0, "atyp": "CROP"},
+                               {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 6.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 7.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 3.0, "y_pos": 8.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 2.0, "y_pos": 9.0, "atyp": "CROP"},
@@ -467,101 +434,56 @@ def createPlantPhenomics_croissance(do_outside, do_merge:int =0):
                                {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 9.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 7.0, "y_pos": 8.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 7.0, "atyp": "CROP"},
+                               {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 6.0, "atyp": "CROP"},
+                               {"id": uuid.uuid4(), "x_pos": 7.0, "y_pos": 5.0, "atyp": "CROP"},
+                               {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 4.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 3.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 7.0, "y_pos": 2.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 1.0, "atyp": "CROP"},
                                {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 0.0, "atyp": "CROP"}
                                ], "Crop")
 
-    mix_4 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 1.05, "atyp": "Tree"}, # y = 1 ok mais mix connecté à l'outside  | y = 1.05 Bug index out of range
+    mix_4 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 1.0, "atyp": "Tree"},
                               {"id": uuid.uuid4(), "x_pos": 7.0, "y_pos": 2.0, "atyp": "Tree"},
-                              {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 3.0, "atyp": "Tree"}], "Mix4")
+                              {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 3.0, "atyp": "Tree"}], "Tree4")
 
-    # mix_5 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 4.0, "atyp": "Tree"},
-    #                           {"id": uuid.uuid4(), "x_pos": 7.0, "y_pos": 5.0, "atyp": "Tree"},
-    #                           {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 6.0, "atyp": "Tree"}], "Tree5")
+    mix_5 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 4.0, "atyp": "Tree"},
+                              {"id": uuid.uuid4(), "x_pos": 7.0, "y_pos": 5.0, "atyp": "Tree"},
+                              {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 6.0, "atyp": "Tree"}], "Tree5")
 
     mix_6 = am.createFace(3, [{"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 7.0, "atyp": "Tree"},
                               {"id": uuid.uuid4(), "x_pos": 7.0, "y_pos": 8.0, "atyp": "Tree"},
-                              {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 9.0, "atyp": "Tree"}], "Mix6")
+                              {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 9.0, "atyp": "Tree"}], "Tree6")
 
-
-    rect2_1 =  am.createFace(5, [{"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 0.7, "atyp": "Tree"},
-                                {"id": uuid.uuid4(), "x_pos": 9.5, "y_pos": 2.0, "atyp": "Tree"},
-                                {"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 3.3, "atyp": "Tree"},
-                                {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 3.0, "atyp": "Tree"},
-                                {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 1.05, "atyp": "Tree"}], "Tree4") #createRect(am, 8.0, 1.0, 10.0, 3.0, "TREE", "Tree4")
-
-
-    # rect2_2 = am.createFace(5, [{"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 3.7, "atyp": "Tree"},
-    #                   {"id": uuid.uuid4(), "x_pos": 9.5, "y_pos": 5.0, "atyp": "Tree"},
-    #                   {"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 6.3, "atyp": "Tree"},
-    #                   {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 6.0, "atyp": "Tree"},
-    #                   {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 4.0, "atyp": "Tree"}], "Tree5")
-
-    rect2_3 = am.createFace(5, [{"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 6.7, "atyp": "Tree"},
-                      {"id": uuid.uuid4(), "x_pos": 9.5, "y_pos": 8.0, "atyp": "Tree"},
-                      {"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 9.3, "atyp": "Tree"},
-                      {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 9, "atyp": "Tree"},
-                      {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 7.0, "atyp": "Tree"}], "Tree3")
-
-    rect2_LSA =  am.createFace(14, [ {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 0.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 10.0, "y_pos": 0.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 10.0, "y_pos": 10.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 10.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 9.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 9.3, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 9.5, "y_pos": 8.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 6.7, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 7.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 3.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 3.3, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 9.5, "y_pos": 2.0, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 8.5, "y_pos": 0.7, "atyp": "LSA"},
-                                   {"id": uuid.uuid4(), "x_pos": 8.0, "y_pos": 1.05, "atyp": "LSA"}
-                                   ],"USV2")
-
-    #createRect(am, 8.0, 9.0, 10.0, 10.0, "LSA", "LSA2_D")
-    am.reverseMap(am.darts[rect2_LSA.dartid])
-    # rect2_2 = createHole(am, rect2_LSA, 8.5, 3.5, 9.5, 4.2, "Tree", "Schrub2")
+    rect2_A = createRect(am, 8.0, 0.0, 10.0, 1.0, "LSA", "LSA2_A")
+    rect2_1 = createRect(am, 8.0, 1.0, 10.0, 3.0, "TREE", "Tree4")
+    rect2_B = createRect(am, 8.0, 3.0, 10.0, 4.0, "LSA", "LSA2_B")
+    rect2_2 = createRect(am, 8.0, 4.0, 10.0, 6.0, "TREE", "Tree5")
+    rect2_C = createRect(am, 8.0, 6.0, 10.0, 7.0, "LSA", "LSA2_C")
+    rect2_3 = createRect(am, 8.0, 7.0, 10.0, 9.0, "TREE", "Tree6")
+    rect2_D = createRect(am, 8.0, 9.0, 10.0, 10.0, "LSA", "LSA2_D")
 
     am.reverseMap(am.darts[mix_1.dartid])
-    # am.reverseMap(am.darts[mix_2.dartid])
+    am.reverseMap(am.darts[mix_2.dartid])
     am.reverseMap(am.darts[mix_3.dartid])
-    am.reverseMap(am.darts[rect2_3.dartid])
-    am.reverseMap(am.darts[rect2_1.dartid])
-
     am.connectDartBeta2Face(carre)
     am.connectDartBeta2Face(rect1_1)
-
-
-    # am.connectDartBeta2Face(rect1_2)
+    am.connectDartBeta2Face(rect1_2)
     am.connectDartBeta2Face(rect1_3)
-
     am.connectDartBeta2Face(rect2_1)
-    # am.connectDartBeta2Face(rect2_2)
-
+    am.connectDartBeta2Face(rect2_2)
     am.connectDartBeta2Face(rect2_3)
-
-    am.connectDartBeta2Face(rect1_LSA)
-
-    am.connectDartBeta2Face(rect2_LSA)
-
-    am.connectDartBeta2Face(mix_1)
-    am.connectDartBeta2Face(mix_3)
-    am.connectDartBeta2Face(mix_4)
-    am.connectDartBeta2Face(mix_6)
 
     if do_merge == 1:
         am.mergeTwoFacesIntoOne(rect1_1, mix_1)
-        # am.mergeTwoFacesIntoOne(rect1_2, mix_2)
+        am.mergeTwoFacesIntoOne(rect1_2, mix_2)
         am.mergeTwoFacesIntoOne(rect1_3, mix_3)
         am.mergeTwoFacesIntoOne(rect2_1, mix_4)
-        # am.mergeTwoFacesIntoOne(rect2_2, mix_5)
+        am.mergeTwoFacesIntoOne(rect2_2, mix_5)
         am.mergeTwoFacesIntoOne(rect2_3, mix_6)
 
     if (do_outside):
-        outside = am.createOutsideFace(am.darts[1],0)
+        outside = am.createOutsideFace(am.darts[0],0)
 
 
     #am.printfDartList(am.darts)
@@ -579,7 +501,8 @@ def createPlantPhenomics_croissance(do_outside, do_merge:int =0):
     pencil.initFig()
 
     pencil.drawMap(am, DRAW_TXT+DRAW_FACE+DRAW_DART)
-    #pencil.drawMapDarts(am, DRAW_TXT+DRAW_FACE+DRAW_DART)
+    #pencil.drawMapDarts(am, DRAW_FACE)
+
     if (do_outside):
         pencil.drawFace(am, outside, DRAW_TXT+DRAW_FACE)
 
@@ -599,13 +522,13 @@ if __name__ == '__main__':
     outside = 0
 
     createTest(outside)
-    #createTest(1-outside)
-    #
+    createTest(1-outside)
+
     createPlantPhenomics(outside)
     createPlantPhenomics(1-outside)
 
-    #createPlantPhenomics_croissance(outside,0)
-    #createPlantPhenomics_croissance(1-outside,0)
+    createPlantPhenomics_croissance(outside,0)
+    createPlantPhenomics_croissance(1-outside,0)
     createPlantPhenomics_croissance(outside,1)
     createPlantPhenomics_croissance(1-outside,1)
 
