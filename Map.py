@@ -14,8 +14,7 @@ DUMMY = 99999
 
 #ref: Listing 5.2
 class nMap:
-    # ref: algorithme 22 (Daminad & Lienhardt 2014)
-    # desc: constructor + initialisation
+    ## Construtor based on algorithme 22 (Damiand & Lienhardt 2014)
     def __init__(self, id= uuid.uuid4()):
         self.id = id
         self.nbd = 0
@@ -30,40 +29,38 @@ class nMap:
             self.freeMarks.append(i)
             self.null_dart.marks[i] = False
 
-    #desc: return an index if available (else -1)
-    # ref: algorithme 23 (Daminand & Lienhardt 2014)
+    ## @desc Indicate a free index, based on algorithme 23 (Daminand & Lienhardt 2014)
+    # @return an index if available (else -1)
     def reserveMarkMap(self):
         if len(self.freeMarks) == 0:
             return -1
         i = self.freeMarks.pop()
         return i
 
-    # ref: algorithme 24 (Daminad & Lienhardt 2014)
-    #desc: make given index available
+    ## @desc: make given index available based on algorithme 24 (Daminad & Lienhardt 2014)
     def freeMarkMap(self, i:int):
         self.freeMarks.append(i)
 
-    # ref: algorithme 25 (Daminad & Lienhardt 2014)
-    #desc: return boolean value of index i in on dart d
+    ## based on algorithm 25 (Daminad & Lienhardt 2014)
+    # @return boolean value of index i in on dart d
     def isMarkedMap(self, d:Dart, i:int):
         return d.marks[i]
 
 
-    # ref: algorithme 26 (Daminad & Lienhardt 2014)
-    # desc: set value True of index i in on dart d
+    ## @desc set value True of index i in on dart d, based on algorithm 26 (Damiand & Lienhardt 2014)
     def markMap(self, d:Dart, i:int):
         d.marks[i] = True
 
 
-    # ref: algorithme 27 (Daminad & Lienhardt 2014)
-    # desc: set value False of index i in on dart d
+    # based on algorithm 27 (Damiand & Lienhardt 2014)
+    # @desc set value False of index i in on dart d
     def unmarkMap(self, d:Dart, i:int):
         d.marks[i] = False
 
 
-    # ref: algorithme 28 (iaminad & Lienhardt 2014)
-    # desc: Sélectionne la permutation en fonction du raang involution, (Si sur beta1 -> beta0, beta0->beta1, beta2->beta2)
-    #rem : pas clair sur le paramètre i (varie entre 0 et N_DIM)
+    # based on algorithm 28 (Diamiand & Lienhardt 2014)
+    # @desc Sélectionne la permutation en fonction du raang involution, (Si sur beta1 -> beta0, beta0->beta1, beta2->beta2)
+    # rem : pas clair sur le paramètre i (varie entre 0 et N_DIM)
     def inv(self, i:int):
         if i == 0:
             return 1
@@ -71,13 +68,11 @@ class nMap:
             return 0
         return i
 
-    # ref: algorithme 29(Daminad & Lienhardt 2014)
-    # desc: parcours d'orbite généralisé
-    # Input:
-    #       self: current map;
-    #       d ∈ self.Darts: the starting dart;
-    #       (i1, ..., ik): a valid sequence of permutation (coding by integers between 0 and N_DIM).
-    # Output : Run through all  the darts of 〈βi1, ..., βik 〉(d).
+    # based en algorithm 29(Damiand & Lienhardt 2014)
+    # @desc: Run through all  the darts of 〈βi1, ..., βik 〉(d). (parcours d'orbite généralisé)
+    #     # @param self: current map;
+    # @param d ∈ self.Darts: the starting dart;
+    # @param (i1, ..., ik): a valid sequence of permutation (coding by integers between 0 and N_DIM).
     def genericIter(self, d:Dart, operation:list):
         ma = self.reserveMarkMap()
         p = []
@@ -98,7 +93,7 @@ class nMap:
         ma = self.null_dart
         self.freeMarkMap(ma)
 
-    # ref: algorithme 30 (Daminad & Lienhardt 2014)
+    # based on algorithm 30 (Damiand & Lienhardt 2014)
     #à revoir et faire pap a pas dans le cas du 2D map
     def vertexIter(self, d:Dart):
         ma = self.reserveMarkMap()
@@ -124,12 +119,16 @@ class nMap:
                     self.unmarkMap(cur.betas[self.inv(i)].betas[j], ma)
         self.freeMarkMap(ma)
 
-    def printfDartList(selfself, dartlist: list[myDart]):
+    ## Print the list of darts in a list
+    # @param dartlist : list of darts
+    def printfDartList(self, dartlist: list[myDart]):
         for dart in dartlist:
             cur = dart
             print("Id:"+str(cur) + " b0:" + str(cur.betas[0]) + " b1:" + str(cur.betas[1])  + " b2:" + str(cur.betas[2]) + "props" + str(cur.properties))
 
-        # ref: algorithme 30 (Damiand & Lienhardt 2014)
+
+    ## Parcours la carte et affiche dans la console le parcours basé sur l'algorithme 30 (Damiand & Lienhardt 2014)
+    # @param d : Dart de départ
     def drawVertexIter(self, d: Dart):
             ma = self.reserveMarkMap()
             p = [d]
@@ -150,11 +149,9 @@ class nMap:
 
             self.freeMarkMap(ma)
 
-    # ref: algorithme 35(Daminad & Lienhardt 2014)
-    # desc: create a dart in current map without connexion with other darts
-    # Input:
-    #       self: current map
-    # Output : new dart
+    # @desc: create a dart in current map without connexion with other darts based on algorithm 35 (Damiand & Lienhardt 2014)
+    # @param self: current map
+    # @return new dart
     @dispatch()
     def createDartNMap(self):
         d = myDart(N_DIM, NB_MARKS)
@@ -167,6 +164,12 @@ class nMap:
         d.num = self.nbd
         return d
 
+    # @desc: create a dart from values in current map without connexion with other darts based on algorithm 35 (Damiand & Lienhardt 2014)
+    # @param self: current map
+    # @param id: id of the nex dart
+    # @param x: x coordinate
+    # @param y: y coordinate
+    # @return new dart
     @dispatch(uuid.UUID, float, float)
     def createDartNMap(self, id : uuid.UUID, x:float, y:float):
         d = myDart.withValue(N_DIM, NB_MARKS, id, x, y)
@@ -179,7 +182,10 @@ class nMap:
         d.num = self.nbd
         return d
 
-
+    # @desc: create a dart from dict in current map without connexion with other darts based on algorithm 35 (Damiand & Lienhardt 2014)
+    # @param self: current map
+    # @param propoerties: dictionnary with values
+    # @return new dart
     @dispatch(dict)
     def createDartNMap(self, properties:dict):
         d = myDart.withProperties(N_DIM, NB_MARKS, properties)
@@ -192,7 +198,11 @@ class nMap:
         d.num = self.nbd
         return d
 
-
+    ## Create a new face in the current map
+    # @param nbSegment : number of side
+    # @param properties: list with darts values [d1, d2,...]
+    # @param facename: indicate what the face representes (ex. Tree, crop...)
+    # @return new face
     def createFace(self, nbSegment :int, properties:list, facename: str = "FaceGeneric"):
         listdarts = []
         for i in range(0, nbSegment):
@@ -207,13 +217,11 @@ class nMap:
         self.buildPolygonBeta1(listdarts)
         return face
 
+    ## Create a new face in the indicated hole
+    # @param hole: hole to fill
+    # @param facename: indicate what the face representes (ex. Tree, crop...)
+    # @return new face
     def fillHoleFace(self, hole, facename: str = "FaceHoleGeneric"):
-        # listDarts = []
-        # newGap = Face()
-        # for i in range(0, nbSegment):
-        #     listDarts.append(newGap.createDartNMap(properties[i]))
-        # self.gap.append(newGap)
-        # self.createOnePolygon(listDarts)
         listdarts = hole.getFaceBeta(hole.darts[0], 1)
         newdarts = []
         for dart in listdarts:
@@ -232,6 +240,12 @@ class nMap:
         newface.name = facename
         return newface
 
+    ## Create a hole and a new face in the face
+    # @param face: current face
+    # @param nbSegment: side of the hole
+    # @param properties: list with darts values [d1, d2,...]
+    # @param nameface: indicate what the face representes (ex. Tree, crop...)
+    # @return new face
     def createFilledGapFace(self, face, nbSegment: int, properties: list, nameface: str):
         listdarts: list[myDart] = []
         for i in range(0, nbSegment):
@@ -263,11 +277,10 @@ class nMap:
         self.faces.append(newface)
         return newface
 
-    #
-    #  extract all darts without beta[2] issued from dart dstart
-    #
-
-    def getUnconnectedBeta2(self, dstart):
+    ##  extract all darts without beta[2] issued from dart dstart
+    # @param dstart: Starting dart
+    # @return outdarts: darts without beta[2]
+    def getUnconnectedBeta2(self, dstart:Dart):
         outdarts = []
         d = dstart
         dorig : myDart = self.null_dart
@@ -309,7 +322,9 @@ class nMap:
 
         return outdarts
 
-
+    ##  extract all darts without beta[2] issued from dart dstart
+    # @param dstart: Starting dart
+    # @return outdarts: darts without beta[2]
     def getUnconnectedBeta2Fast(self, dstart):
         outdarts = []
         no = 0
@@ -320,8 +335,10 @@ class nMap:
 
         return outdarts
 
-
-
+    ## Create outisde Face of the map
+    # @param d: Starting dart
+    # @param mode:
+    # @return oustide: outside face
     def createOutsideFace(self, d, mode):
         # retrieve all darts without beta2
 
@@ -415,11 +432,12 @@ class nMap:
 
         return newface
 
-    # ref: algorithme 36 (Daminad & Lienhardt 2014)
+    # based on algorithm 36 (Damiand & Lienhardt 2014)
+    # @param d : dart to remove
     def removeIsolatedDartNMap(self, d:Dart):
         self.darts.remove(d)
 
-    # ref: algorithme 37 (Daminad & Lienhardt 2014)
+    # based on algorithm 37 (Damiand & Lienhardt 2014)
     def __copy__(self):
         copy = nMap()
         copy.darts = None
@@ -436,22 +454,22 @@ class nMap:
             for i in range(0, NB_MARKS-1):
                 d_copy.marks[i] = d.marks[i]
 
-    # ref: algorithme 34 (Daminad & Lienhardt 2014)
+    # based on algorithm 34 (Daminad & Lienhardt 2014)
     def isFreeNMap(self, d:Dart, i:int):
         if (d.betas[i] == self.null_dart):
             return True
         else:
             return False
 
-    # ref: algorithme 44 (Damiand & Lienhardt 2014)
+    # based on algorithm 44 (Damiand & Lienhardt 2014)
     def oneSewMyMap(self, d1:Dart, d2:Dart):
         # if self.isFreeNMap(d1, 0)  :
             d1.betas[1] = d2
             d2.betas[0] = d1
 
     # Fixe le beta2 (le dart dans le sens inverse)
-    # input : current le date traité
-    #          opp le dart sur lequel beta2(current) doit renvoyer
+    # @param current: le dart traité
+    # @param opp: le dart sur lequel beta2(current) doit renvoyer
     def setBeta2(self, current:Dart, opp : Dart):
         if current != self.null_dart:
             if opp != self.null_dart:
@@ -462,7 +480,10 @@ class nMap:
         else:
             print("The current dart is empty")
 
-
+    # Determine if the dart is the beta2 of the given dart (test the coordinates)
+    # @param current: current dart
+    # @param d: tested dart
+    # @return True : the coordinates are the same
     def isBeta2(self, curent:myDart, d:myDart):
         coord_current = curent.getCoordinates()
         coord_next = curent.betas[1].getCoordinates()
@@ -473,14 +494,16 @@ class nMap:
         else:
             return False
 
-    # Créer un polygone
-    # input : list contenant tous les darts du polygone
+    # Create a polygon
+    # @param listDart: list with all darts of the polygon
     def buildPolygonBeta0(self, listDart):
         lasrIndex = len(listDart)-1
         for i in range(0, lasrIndex):
             self.oneSewMyMap(listDart[i+1], listDart[i])
         self.oneSewMyMap(listDart[0], listDart[lasrIndex])
 
+    # Create a polygon
+    # @param listDart: list with all darts of the polygon
     def buildPolygonBeta1(self, listDart):
         lasrIndex = len(listDart)-1
         for i in range(0, lasrIndex):
@@ -488,6 +511,8 @@ class nMap:
         self.oneSewMyMap(listDart[lasrIndex], listDart[0])
 
     # Renvoie tous les darts de la face dont le dart d appartient
+    # @param d: Starting dart
+    # @return face by the list of darts
     def getFace(self, d: Dart):
         ma = self.reserveMarkMap()
         p = [d]
@@ -510,6 +535,9 @@ class nMap:
         return dartFace
 
     # Renvoie les darts de la face à partir du dart d en suivant les beta (0 contour de la face, 1 contour intérieur)
+    # @param d : Starting dart
+    # @param beta: indicates which dart desired (0 : beta0, 1 beta1)
+    # @return darts in the face
     def getFaceBeta(self, d: Dart, beta: int):
         ma = self.reserveMarkMap()
         p = [d]
@@ -531,8 +559,10 @@ class nMap:
         self.freeMarkMap(ma)
         return dartsface
 
-
-
+    # Obtain all points of the face
+    # @param d: Starting point
+    # @param beta: indicates which dart desired (0 : beta0, 1 beta1)
+    # @return list of coordinates
     def getCoordFromFace(self, d: Dart, beta: int):
         listdarts: list[myDart] = self.getFaceBeta(d, beta)
         coord = []

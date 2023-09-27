@@ -5,7 +5,9 @@ from drawModes import *
 
 ##desc: Class allowing draw combinatorial maps
 #date: 07/02/2023
-#author: L.L.
+#author: L.L. et M.J.
+
+
 class Pencil:
 
     # Draw a simple dart
