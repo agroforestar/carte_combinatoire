@@ -1,4 +1,4 @@
-# Carte ombinatoire
+# Carte combinatoire
 ## Description
 Ce projet est une implémentation des algoritmes décrits dans *Combinatorial Maps: Efficient Data Structures for Computer Graphics and Image Processing* de Damiand et Lienhardt (2014) dans le but de l'appliquer à l'agroforesterie et dévelopée dans le cadre de la thèse de Laëtitia Lemière. 
 
